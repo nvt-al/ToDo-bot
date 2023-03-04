@@ -1,0 +1,57 @@
+{% extends 'base.html' %}    
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block body %}
+<div class="container">
+<h1>Твои напоминания</h1>
+<div class="container">
+
+      <div class="list-group">
+        <label class="list-group-item d-flex gap-3">
+          <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;">
+          <span class="pt-1 form-checked-content">
+            <strong>Купить молока</strong>
+            <small class="d-block text-muted">
+              <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"></use></svg>
+              13:33
+            </small>
+          </span>
+        </label>
+        <label class="list-group-item d-flex gap-3">
+          <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
+          <span class="pt-1 form-checked-content">
+            <strong>Сходить на тренировку</strong>
+            <small class="d-block text-muted">
+              <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"></use></svg>
+              2:00
+            </small>
+          </span>
+        </label>
+        <label class="list-group-item d-flex gap-3">
+          <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
+          <span class="pt-1 form-checked-content">
+            <strong>Выбросить мусор</strong>
+            <small class="d-block text-muted">
+              <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#alarm"></use></svg>
+              Завтра
+            </small>
+          </span>
+        </label>
+        <label class="list-group-item d-flex gap-3 bg-light">
+          <input class="form-check-input form-check-input-placeholder bg-light flex-shrink-0" disabled="" type="checkbox" value="" style="font-size: 1.375em;">
+          <span class="pt-1 form-checked-content">
+            <span contenteditable="true" class="w-100">Добавить новую задачу</span>
+            <small class="d-block text-muted">
+              <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#list-check"></use></svg>
+              Показать все задачи
+            </small>
+          </span>
+        </label>
+      </div>
+</div>
+</div>
+</div>
+{% endblock %}

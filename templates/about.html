@@ -1,0 +1,27 @@
+{% extends 'base.html' %}    
+
+{% block title %}
+Добавить зачаду
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Добавить</h1>
+    <textarea class="form-control js-disable js-save-disabled" rows="5" id="rep-text" laceholder="Введите текст напоминания" maxlength="450"></textarea>
+    <form action="/examples/php-scripts/time.php" method="get">
+        <fieldset> <legend>Введите время</legend>
+        <p><input type="time" name="selected_time" list="time-list"></p>
+        <datalist id="time-list">
+        </datalist>
+        </fieldset>
+        
+        </form>
+    <div class="form-group">
+        <label for="inputDate">Введите дату:</label>
+        <input type="date" class="form-control">
+        <p><input type="reset"> <input type="submit"></p>
+    </div>  
+
+</div>
+{% endblock %}
