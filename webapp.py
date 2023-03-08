@@ -3,6 +3,7 @@ from flask import Flask, render_template, url_for   # render - copy, url_for()
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from forms import TaskForm
+from flask import redirect
 
 
 
@@ -37,10 +38,19 @@ def index():          # возвращает текст, который выво
     return render_template('index.html')    # связка с html
 
 
-@app.route('/about/', methods=['GET', 'POST'])    
-def about():          # fix 
-    form = TaskForm()            
+
+@app.route('/about/', methods=['GET', 'POST'])
+def about():
+    form = TaskForm()
+    if form.validate_on_submit():
+        return redirect ('/home')
     return render_template('about.html', form=form)
+
+
+# @app.route('/about/', methods=['GET', 'POST'])    
+# def about():          # fix 
+#     form = TaskForm()            
+#     return render_template('about.html', form=form)
 
 
 
