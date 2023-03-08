@@ -7,7 +7,7 @@
 {% block body %}
 
 <div class="container">
-    <h1>Добавить</h1>
+    <h1>Добавить напоминание</h1>
     <textarea class="form-control js-disable js-save-disabled" rows="5" id="rep-text" laceholder="Введите текст напоминания" maxlength="450"></textarea>
     <form action="/examples/php-scripts/time.php" method="get">
         <fieldset> <legend>Введите время</legend>
@@ -16,12 +16,22 @@
         </datalist>
         </fieldset>
         
-        </form>
+        
     <div class="form-group">
         <label for="inputDate">Введите дату:</label>
         <input type="date" class="form-control">
-        <p><input type="reset"> <input type="submit"></p>
+        <p>{{form.submit()}}</p>
     </div>  
-
+  </form>
 </div>
 {% endblock %}
+
+<!-- <form>
+    <label for="appt">Выберите время:</label>
+    <input type="time" id="appt" name="appt">
+    
+
+    
+     <label for="birthday">Выберете дату:</label>
+     <input type="date" id="birthday" name="birthday">
+</form> -->
