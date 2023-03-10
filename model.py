@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class Tasks(db.Model):
+class Tasks(db.Model):  # Name "db.Model" is not defined  [name-defined] mypy(error)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     owner = db.Column(db.Integer, nullable=False)
