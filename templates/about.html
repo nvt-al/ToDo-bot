@@ -1,45 +1,30 @@
 {% extends 'base.html' %}    
 
 {% block title %}
-Добавить зачаду
+Добавить задачу
 {% endblock %}
 
 {% block body %}
 
 
-<form method="POST" action="/about/">
+<div class="container">
+    <h1>Добавить задачу</h1>
+    
+    <form method="POST" action="">
+
+
+  
     {{ form.hidden_tag() }}
-    {{ form.new_task.label }} {{ form.new_task(size=20) }}
-    <input type="submit" value="Добавить напоминание">
-</form>
+    
+    {{ form.new_task.label }} {{ form.new_task(size=80) }}
+    
+    <p>{{ form.to_time.label }}<br>{{ form.to_time(class_="datetimepicker2") }}</p>
+    <p>{{ form.to_date.label }}<br>{{ form.to_date(class_="datetimepicker2") }}</p>
+    
+    <input type="submit" value="Создать">
+    </form>
+</div>
 
 
-<!-- <div class="container">
-    <h1>Добавить напоминание</h1>
-    <textarea class="form-control js-disable js-save-disabled" rows="5" id="rep-text" laceholder="Введите текст напоминания" maxlength="450"></textarea>
-    <form action="/examples/php-scripts/time.php" method="get">
-        <fieldset> <legend>Введите время</legend>
-        <p><input type="time" name="selected_time" list="time-list"></p>
-        <datalist id="time-list">
-        </datalist>
-        </fieldset>
-        
-        
-    <div class="form-group">
-        <label for="inputDate">Введите дату:</label>
-        <input type="date" class="form-control">
-        <p>{{form.submit()}}</p>
-    </div>  
-  </form>
-</div> -->
 {% endblock %}
 
-<!-- <form>
-    <label for="appt">Выберите время:</label>
-    <input type="time" id="appt" name="appt">
-    
-
-    
-     <label for="birthday">Выберете дату:</label>
-     <input type="date" id="birthday" name="birthday">
-</form> -->

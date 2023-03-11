@@ -8,22 +8,26 @@
 <div class="container">
 <h1>Твои напоминания</h1>
 <div class="container">
-
+  <form method="POST" action="">
       <div class="list-group">
         <label class="list-group-item d-flex gap-3">
-          <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="" style="font-size: 1.375em;">
+          <input class="form-check-input flex-shrink-0" type="checkbox" value=""  style="font-size: 1.375em;">
           <span class="pt-1 form-checked-content">
-            <strong>Купить молока</strong>
+            <strong>Купить молоко</strong>
+            {{ form.hidden_tag() }}
+            <p>{{ form.submit_yes }} {{ form.submit_del }}</p>
             <small class="d-block text-muted">
               <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"></use></svg>
               13:33
             </small>
           </span>
         </label>
+      </form>
         <label class="list-group-item d-flex gap-3">
           <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
           <span class="pt-1 form-checked-content">
             <strong>Сходить на тренировку</strong>
+            <p>{{ form.submit_yes }} {{ form.submit_del }}</p>
             <small class="d-block text-muted">
               <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#calendar-event"></use></svg>
               2:00
@@ -34,6 +38,7 @@
           <input class="form-check-input flex-shrink-0" type="checkbox" value="" style="font-size: 1.375em;">
           <span class="pt-1 form-checked-content">
             <strong>Выбросить мусор</strong>
+            <p>{{ form.submit_yes }} {{ form.submit_del }}</p>
             <small class="d-block text-muted">
               <svg class="bi me-1" width="1em" height="1em"><use xlink:href="#alarm"></use></svg>
               Завтра

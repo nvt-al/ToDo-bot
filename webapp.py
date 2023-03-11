@@ -1,9 +1,9 @@
 
-from flask import Flask, render_template, url_for   # render - copy, url_for()
+from flask import Flask, render_template, url_for, redirect, flash
+from flask import request 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from forms import TaskForm
-from flask import redirect
 
 
 
@@ -29,28 +29,33 @@ app.config['SECRET_KEY'] = 'thecodex'
 #     def __repr__(self):
 #         return '<Article %r>' % self.id    # ссылка с id
 
-
-
-
 @app.route('/') 
-@app.route('/home')   # деккортатор 
-def index():          # возвращает текст, который выводим на сайте
-    return render_template('index.html')    # связка с html
+@app.route('/home', methods=['GET', 'POST'])   # деккортатор 
+def index():
+    form = TaskForm()
+    if request.method == 'POST':
+        if request.form.get['submit_button'] == 'Выполнено':
+            return render_template('index.html', form=form) # do something
+        elif request.form.get['submit_button'] == 'Отменить':
+            return render_template('index.html', form=form) # do something else
+        else:
+            pass # unknown
+    elif request.method == 'GET':
+        return render_template('index.html', form=form)          # возвращает текст, который выводим на сайте
+        # связка с html
 
 
-
-@app.route('/about/', methods=['GET', 'POST'])
+# Create Class Form
+@app.route('/about/', methods = ['GET', 'POST'])
 def about():
     form = TaskForm()
     if form.validate_on_submit():
-        return redirect ('/home')
-    return render_template('about.html', form=form)
+        # flash("Заметка создана")
+        return redirect('/index')
 
-
-# @app.route('/about/', methods=['GET', 'POST'])    
-# def about():          # fix 
-#     form = TaskForm()            
-#     return render_template('about.html', form=form)
+    return render_template('about.html', 
+        title = 'Создать',
+        form = form)
 
 
 
