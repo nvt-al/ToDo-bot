@@ -1,10 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
-
+from flask_sqlalchemy import SQLAlchemy, model
 
 db = SQLAlchemy()
+Base: model = db.Model
 
 
-class Tasks(db.Model):  # Name "db.Model" is not defined  [name-defined] mypy(error)
+class Tasks(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     owner = db.Column(db.Integer, nullable=False)
@@ -12,7 +12,8 @@ class Tasks(db.Model):  # Name "db.Model" is not defined  [name-defined] mypy(er
     status = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return '<Задача {} {}>'.format(self.id, self.name)
+        return "<Задача {} {}>".format(self.id, self.name)
+
 
 # class lists(db.Model: Model):
 #     id = db.Column(db.Integer, primary_key=True)
