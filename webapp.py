@@ -14,48 +14,51 @@ app.config['SECRET_KEY'] = 'thecodex'
 
 # db = SQLAlchemy(app)
 
-# with app.app_context():
-#     db.create_all()
 
+tasks = [{'id': '01', 'name': 'Утренняя зарядка', 'time': '06:00', 'done': True},
+        {'id': '02', 'name': 'Уроки Python', 'description': '15 мин занятия', 'done': False},
+        {'id': '03', 'name': 'Уроки English', 'description': '15 мин занятия', 'done': False},
+        {'id': '04', 'name': 'Слова English', 'description': 'Выучить 5 новых слов', 'done': True},
+        {'id': '05', 'name': 'Лекарства', 'time': '12:15', 'done': False}]
+print(tasks)
 
-# class Article(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     text = db.Column(db.String(300), nullable=False)
-#     date = db.Column(db.DateTime, default=datetime.utcnow)
-
-    
-
-
-#     def __repr__(self):
-#         return '<Article %r>' % self.id    # ссылка с id
-
-@app.route('/') 
-@app.route('/home', methods=['GET', 'POST'])   # деккортатор 
+@app.route('/')
 def index():
     form = TaskForm()
-    if request.method == 'POST':
-        if request.form.get['submit_button'] == 'Выполнено':
-            return render_template('index.html', form=form) # do something
-        elif request.form.get['submit_button'] == 'Отменить':
-            return render_template('index.html', form=form) # do something else
-        else:
-            pass # unknown
-    elif request.method == 'GET':
-        return render_template('index.html', form=form)          # возвращает текст, который выводим на сайте
-        # связка с html
+    return render_template('index.html', tasks=tasks, form=form)
 
 
-# Create Class Form
-@app.route('/about/', methods = ['GET', 'POST'])
-def about():
+
+
+@app.route('/add_task', methods=['GET', 'POST'])
+def add_task():
     form = TaskForm()
-    if form.validate_on_submit():
-        # flash("Заметка создана")
-        return redirect('/index')
+    if request.method == 'POST':
+        # id = request.form['id']
+        to_time = request.form['to_time']
+        to_date = request.form['to_date']
+        new_task = request.form['new_task']
+        description_task = request.form['description_task']
+        # done = request.form['done']
+        task = {'name': new_task, 'description': description_task, 'date': to_date, 'time': to_time}
+        tasks.append(task)
+        print(task)
+        flash('Задача добавлена!')
+        return redirect(url_for('index'))
+    return render_template('add_task.html', title='Add Task', form=form)
 
-    return render_template('about.html', 
-        title = 'Создать',
-        form = form)
+# @app.route('/add_task', methods=['POST', 'GET'])
+# def add_task():
+#     id = request.form['id']
+#     name = request.form['name']
+#     description = request.form['description']
+#     done = request.form['done']
+#     task = {'id': id, 'done': done, 'name': name, 'description': description}
+#     tasks.append(task)
+#     print(tasks)
+#     return redirect(url_for('index'))
+
+
 
 
 

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}    
+
+{% block title %}
+Добавить задачу
+{% endblock %}
+
+{% block body %}
+
+
+
+
+
+
+<div class="container">
+    <h1>Добавить задачу</h1>
+    
+    <form method="POST" action="{{ url_for('add_task') }}">
+
+
+  
+    {{ form.hidden_tag() }}
+    
+    <p>{{ form.new_task.label }} {{ form.new_task(size=40) }}</p>
+    <p>{{ form.description_task.label }} {{ form.description_task(size=60) }}</p>
+
+    
+    <p>{{ form.to_time.label }}<br>{{ form.to_time }}</p>
+    <p>{{ form.to_date.label }}<br>{{ form.to_date }}</p>
+    
+    
+    <input type="submit" value="Создать">
+    </form>
+</div>
+
+
+
+{% endblock %}
+
+
