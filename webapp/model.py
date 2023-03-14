@@ -9,7 +9,7 @@ class TaskTemplates(Base):
     name = db.Column(db.String, nullable=False)
     owner = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text)
-    status = db.Column(db.Integer, nullable=False)
+    id_status = db.Column(db.Integer, db.ForeignKey("statuses.id"), nullable=False)
 
     def __repr__(self):
         return "<Задача {} {}>".format(self.id, self.name)
@@ -23,19 +23,19 @@ class Statuses(Base):
         return "<Статус {} {}>".format(self.id, self.name)
 
 
-class Lists(Base):
+class ToDoLists(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return "<Имя списка {}>".format(self.name)
+        return "<Имя ToDo списка {}>".format(self.name)
 
 
-class ToDoList(Base):
+class Tasks(Base):
     id = db.Column(db.Integer, primary_key=True)
-    id_task = db.Column(db.Integer, nullable=False)
-    id_list = db.Column(db.Integer, nullable=False)
+    id_task = db.Column(db.Integer, db.ForeignKey("task_templates.id"), nullable=False)
+    id_list = db.Column(db.Integer, db.ForeignKey("to_do_lists.id"), nullable=False)
     task_done = db.Column(db.Boolean)
 
     def __repr__(self):
-        return "<Имя списка {}>".format(self.name)
+        return "<Задача {} из спска {}>".format(self.id_task, self.id_list)
