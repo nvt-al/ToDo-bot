@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 
-from webapp.model import db
+from webapp.models import db
 
 
 def create_app():
@@ -9,6 +9,6 @@ def create_app():
 
     app.config.from_pyfile("config.py")
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db, rander_as_batch=True)
 
     return app
