@@ -9,6 +9,6 @@ def create_app():
 
     app.config.from_pyfile("config.py")
     db.init_app(app)
-    migrate = Migrate(app, db, rander_as_batch=True)
+    migrate = Migrate(app, db)
 
     return app
