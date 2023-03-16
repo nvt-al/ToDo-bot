@@ -1,34 +1,46 @@
-
-
-{% extends 'base.html' %}    
+{% extends 'base.html' %}
 
 {% block title %}
 Главная страница
-{% endblock %}  
+{% endblock %}
+
 {% block body %}
 <div class="container">
+  <h1 class="mb-4">Задачи</h1>
+  <form method="POST" action="/" class="needs-validation" novalidate>
+    {{ form.hidden_tag() }}
+    <ul class="list-group">
+      {% for task in tasks %}
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-8">
+            <h4>№{{ task.id }} {{ task.name }}</h4>
+            <p>{{ task.description }}</p>
+            <form method="post" action="{{ url_for('index') }}">
+              <button type="submit">Delete</button>
+            </form>
+          </div>
+          <div class="col-md-4">
+            {% if task.complete == False %}
+            <span>Ожидается</span>
+            {% else %}
+            <span>Выполнено</span>
+            {% endif %}
+            <p class="text-end">{{ task.time }}</p>
+            <div class="form-group">
+              <!-- {{ form.status.label(class="form-label") }}
+                  {{ form.status(class="form-control") }} -->
+              {{ form.done }}
 
-
-<h1>Задачи</h1>
-    <form method="POST" action="\">
-      {{ form.hidden_tag() }}
-<!-- перебор ключ\значений из словарей -->
-
-
-
-    {% for task in tasks %}
-    <li>{{ task.name }}  {{ task.description }} - {{ task.time }} -</li>
-    <p> {{ form.status.label }} <br> {{ form.status }}</p>
-   
-    
-  {% endfor %}
-  
-        
-  
-  
-</form>
+              <button type="submit" class="btn btn-primary mt-2">Выполнено</button> {{ form.edit_task }} {{
+              form.delete_task }}
+              <!-- <div class="invalid-feedback">{{ form.status.errors[0] }}</div> -->
+            </div>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </form>
 </div>
-  {% endblock %}
-
-
-
+{% endblock %}

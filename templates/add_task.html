@@ -1,4 +1,4 @@
-{% extends 'base.html' %}    
+{% extends 'base.html' %}
 
 {% block title %}
 Добавить задачу
@@ -6,34 +6,45 @@
 
 {% block body %}
 
-
-
-
-
-
 <div class="container">
     <h1>Добавить задачу</h1>
-    
+
     <form method="POST" action="{{ url_for('add_task') }}">
 
 
-  
-    {{ form.hidden_tag() }}
-    
-    <p>{{ form.new_task.label }} {{ form.new_task(size=40) }}</p>
-    <p>{{ form.description_task.label }} {{ form.description_task(size=60) }}</p>
-
-    
-    <p>{{ form.to_time.label }}<br>{{ form.to_time }}</p>
-    <p>{{ form.to_date.label }}<br>{{ form.to_date }}</p>
-    
-    
-    <input type="submit" value="Создать">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.new_task.label(class="form-label") }}
+            {{ form.new_task(class="form-control", placeholder="Введите задачу", required=True) }}
+            <div class="invalid-feedback">
+                Пожалуйста, введите задачу.
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ form.description_task.label(class="form-label") }}
+            {{ form.description_task(class="form-control", placeholder="Введите описание задачи", required=True) }}
+            <div class="invalid-feedback">
+                Пожалуйста, введите описание задачи.
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                {{ form.to_time.label(class="form-label") }}
+                {{ form.to_time(class="form-control", placeholder="Введите время", required=True) }}
+                <div class="invalid-feedback">
+                    Пожалуйста, введите время.
+                </div>
+            </div>
+            <div class="col">
+                {{ form.to_date.label(class="form-label") }}
+                {{ form.to_date(class="form-control", placeholder="Введите дату", required=True) }}
+                <div class="invalid-feedback">
+                    Пожалуйста, введите дату.
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Создать</button>
     </form>
 </div>
 
-
-
 {% endblock %}
-
-
