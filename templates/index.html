@@ -16,9 +16,6 @@
           <div class="col-md-8">
             <h4>№{{ task.id }} {{ task.name }}</h4>
             <p>{{ task.description }}</p>
-            <form method="post" action="{{ url_for('index') }}">
-              <button type="submit">Delete</button>
-            </form>
           </div>
           <div class="col-md-4">
             {% if task.complete == False %}
