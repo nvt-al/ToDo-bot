@@ -1,8 +1,10 @@
 from flask import Flask, render_template
+from flask_login import LoginManager
 from flask_migrate import Migrate
 
 from webapp.models import db
-from webapp.user.forms import LoginForm
+from webapp.user.models import User
+from webapp.user.views import blueprint as user_blueprint
 
 
 def create_app():
@@ -12,10 +14,19 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    @app.route("/login")
-    def login():
-        title = "Авторизация"
-        login_form = LoginForm()
-        return render_template("user/login.html", page_title=title, form=login_form)
+    @app.route("/")
+    def index():
+        title = "Индекс"
+        return render_template("index.html", page_title=title)
+
+    app.register_blueprint(user_blueprint)
+
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = "login"
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
 
     return app
