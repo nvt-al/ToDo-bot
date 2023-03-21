@@ -12,7 +12,7 @@
                     </div>
                 {% endif %}
             {% endwith %}
-            <form action="{{ url_for('user.process_settings_save') }}" method="POST">
+            <form action="{{ url_for('user.process_save_settings') }}" method="POST">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     {{ form.telegram_user.label }}

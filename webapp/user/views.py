@@ -78,6 +78,20 @@ def settings():
     return render_template("user/settings.html", page_title=title, form=settings_form)
 
 
-@blueprint.route("/process-settings", methods=["PUT"])
-def process_settings_save():
+@blueprint.route("/process-save-settings", methods=["POST"])
+def process_save_settings():
+    settings_form = SettingsForm()
+    my_user = User.query.filter_by(id=current_user.id).first()
+    if settings_form.validate_on_submit():
+        my_user.telegram_user = settings_form.telegram_user.data
+        my_user.default_reminder_time = settings_form.default_reminder_time.data
+        my_user.time_start_new_day = settings_form.time_start_new_day.data
+        my_user.week_report = settings_form.week_report.data
+        my_user.month_report = settings_form.month_report.data
+        db.session.commit()
+        flash("Настройки успешно сохранены!")
+    else:
+        for field, errors in settings_form.errors.items():
+            for error in errors:
+                flash('Ошибка в поле "{}": - {}'.format(getattr(settings_form, field).label.text, error))
     return redirect(url_for("user.settings"))
