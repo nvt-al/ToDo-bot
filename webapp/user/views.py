@@ -65,8 +65,13 @@ def process_reg():
 
 @blueprint.route("/settings")
 def settings():
-    if current_user.is_authenticated:
-        return redirect(url_for("index"))
+    if not current_user.is_authenticated:
+        return redirect(url_for("user.login"))
     form = SettingsForm()
     title = "Настройки"
     return render_template("user/settings.html", page_title=title, form=form)
+
+
+@blueprint.route("/process-settings", methods=["POST"])
+def process_settings_save():
+    return redirect(url_for("user.settings"))

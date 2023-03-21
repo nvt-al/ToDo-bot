@@ -36,6 +36,6 @@ class SettingsForm(FlaskForm):
     telegram_user = StringField("Telegram", render_kw={"class": "form-control"})
     default_reminder_time = TimeField("Время напоминаний", render_kw={"class": "form-control"})
     time_start_new_day = TimeField("Начало нового дня", render_kw={"class": "form-control"})
-    week_report = BooleanField("Отчёт за неделю", render_kw={"class": "form-check-input"})
-    month_report = BooleanField("Отчёт за неделю", render_kw={"class": "form-check-input"})
+    week_report = BooleanField("Отправлять отчёт за неделю", render_kw={"class": "form-check-input"})
+    month_report = BooleanField("Отправлять отчёт за неделю", render_kw={"class": "form-check-input"})
     submit = SubmitField("Сохранить", render_kw={"class": "btn btn-primary"})
