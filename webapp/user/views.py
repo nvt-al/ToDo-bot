@@ -67,11 +67,17 @@ def process_reg():
 def settings():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
-    form = SettingsForm()
+    settings_form = SettingsForm(
+        telegram_user=current_user.telegram_user,
+        default_reminder_time=current_user.default_reminder_time,
+        time_start_new_day=current_user.time_start_new_day,
+        week_report=current_user.week_report,
+        month_report=current_user.month_report,
+    )
     title = "Настройки"
-    return render_template("user/settings.html", page_title=title, form=form)
+    return render_template("user/settings.html", page_title=title, form=settings_form)
 
 
-@blueprint.route("/process-settings", methods=["POST"])
+@blueprint.route("/process-settings", methods=["PUT"])
 def process_settings_save():
     return redirect(url_for("user.settings"))
