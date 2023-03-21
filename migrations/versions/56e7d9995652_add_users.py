@@ -1,15 +1,15 @@
-"""add class user
+"""add users
 
-Revision ID: 6d2f0ed43fbc
+Revision ID: 56e7d9995652
 Revises: 0bd72cb7828a
-Create Date: 2023-03-20 21:18:33.199145
+Create Date: 2023-03-21 15:28:33.298873
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "6d2f0ed43fbc"
+revision = "56e7d9995652"
 down_revision = "0bd72cb7828a"
 branch_labels = None
 depends_on = None
@@ -27,7 +27,7 @@ def upgrade():
         sa.Column("telegram_id", sa.Integer(), nullable=True),
         sa.Column("active_list", sa.Integer(), nullable=True),
         sa.Column("default_reminder_time", sa.Time(), nullable=True),
-        sa.Column("time_start_new_day", sa.Time(), nullable=True),
+        sa.Column("time_start_new_day", sa.Time(), nullable=False),
         sa.Column("week_report", sa.Boolean(), nullable=True),
         sa.Column("month_report", sa.Boolean(), nullable=True),
         sa.ForeignKeyConstraint(["active_list"], ["to_do_lists.id"], name=op.f("fk_user_active_list_to_do_lists")),

@@ -2,7 +2,7 @@ from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_user, logout_user
 
 from webapp.models import db
-from webapp.user.forms import LoginForm, RegistrationForm
+from webapp.user.forms import LoginForm, RegistrationForm, SettingsForm
 from webapp.user.models import User
 
 blueprint = Blueprint("user", __name__, url_prefix="/user")
@@ -61,3 +61,12 @@ def process_reg():
             for error in errors:
                 flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
         return redirect(url_for("user.register"))
+
+
+@blueprint.route("/settings")
+def settings():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = SettingsForm()
+    title = "Настройки"
+    return render_template("user/settings.html", page_title=title, form=form)
