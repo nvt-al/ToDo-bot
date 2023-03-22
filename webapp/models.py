@@ -25,6 +25,11 @@ class TaskTemplates(Base):
     def __repr__(self):
         return "<Задача {} {}>".format(self.id, self.name)
 
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {"id": self.id, "name": self.name, "description": self.description, "is_active": self.is_active}
+
 
 class ToDoLists(Base):
     id = db.Column(db.Integer, primary_key=True)
