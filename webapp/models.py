@@ -45,8 +45,10 @@ class Tasks(Base):
     id_list = db.Column(db.Integer, db.ForeignKey("to_do_lists.id"), nullable=False)
     task_done = db.Column(db.Boolean, default=False)
 
-    task_template = relationship("TaskTemplates", backref="tasks")
+    # task_template = relationship("TaskTemplates", backref="tasks")
+    task_template = relationship("TaskTemplates", backref="tasks", lazy="joined")
+    # task_template = relationship("TaskTemplates", backref="tasks", lazy="dynamic")
     todo_list = relationship("ToDoLists", backref="tasks")
 
     def __repr__(self):
-        return "<Задача {} из спска {}>".format(self.id_task, self.id_list)
+        return "<Задача №{} из списка {}>".format(self.id_task, self.id_list)
