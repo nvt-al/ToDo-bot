@@ -8,7 +8,7 @@ blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0/tasks")
 
 @blueprint.route("/", methods=["GET"])
 def get_tasks():
-    query = Tasks.query.filter(Tasks.id_list == 1).all()
+    query = Tasks.query.filter(Tasks.id_list == current_user.active_list).all()
     tasks = []
     for task in query:
         tasks.append(
@@ -20,6 +20,9 @@ def get_tasks():
             }
         )
     return jsonify({"tasks": tasks})
+
+
+# Возвращает все записи, а должен только этого пользователя
 
 
 @blueprint.route("/templates", methods=["GET"])
