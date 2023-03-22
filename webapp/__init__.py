@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
+from webapp.generate_fake_data.views import blueprint as fake_blueprint
 from webapp.models import db
 from webapp.user.models import User
 from webapp.user.views import blueprint as user_blueprint
@@ -20,6 +21,7 @@ def create_app():
         return render_template("index.html", page_title=title)
 
     app.register_blueprint(user_blueprint)
+    app.register_blueprint(fake_blueprint)
 
     login_manager = LoginManager()
     login_manager.init_app(app)
