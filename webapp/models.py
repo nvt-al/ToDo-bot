@@ -18,7 +18,7 @@ Base: model = db.Model
 class TaskTemplates(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    owner = db.Column(db.Integer, nullable=False)
+    owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     description = db.Column(db.Text)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
