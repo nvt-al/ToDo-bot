@@ -2,6 +2,7 @@
 todo.db
 todo.db.old
 todo.db-journal
+config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
