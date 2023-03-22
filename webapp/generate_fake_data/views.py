@@ -18,5 +18,5 @@ def fake_data():
 def process_generation_data():
     form = GenerateDataForm()
     if form.is_submitted():
-        generate.generation_user_templates()
+        generate.generate_fake_data()
     return redirect(url_for("generate_fake_data.fake_data"))
