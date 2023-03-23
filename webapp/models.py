@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy, model
 from sqlalchemy import MetaData
-from sqlalchemy.orm import relationship
 
 metadata = MetaData(
     naming_convention={

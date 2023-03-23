@@ -1,10 +1,14 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, abort, jsonify, make_response, request
 from flask_login import current_user
-from sqlalchemy import text
 
 from webapp.models import Tasks, TaskTemplates, db
 
 blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0/tasks")
+
+
+@blueprint.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({"error": "Not found"}), 404)
 
 
 @blueprint.route("/", methods=["GET"])
@@ -39,8 +43,63 @@ def get_tasks():
     return jsonify({"tasks": tasks})
 
 
+@blueprint.route("/<int:task_id>", methods=["GET"])
+def get_task(task_id):
+    query = (
+        db.session.query(Tasks, TaskTemplates)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .filter(Tasks.id == task_id)
+        .first()
+    )
+
+    if query is None:
+        abort(404)
+
+    task = {
+        "task_id": query[0].id,
+        "name": query[1].name,
+        "description": query[1].description,
+        "is_active": query[1].is_active,
+        "task_done": query[0].task_done,
+    }
+    return jsonify({"task": task})
+
+
+@blueprint.route("/<int:task_id>", methods=["PUT"])
+def update_task(task_id):
+    task = (
+        db.session.query(Tasks, TaskTemplates)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .filter(Tasks.id == task_id)
+        .first()
+    )
+
+    if task is None:
+        abort(404)
+    if not request.json:
+        abort(400)
+    if "task_done" in request.json and type(request.json["task_done"]) is not bool:
+        abort(400)
+    task["task_done"] = request.json.get("task_done", task["task_done"])
+    return jsonify({"task": task})
+
+
 @blueprint.route("/templates", methods=["GET"])
 def get_task_templates():
     task_templates = TaskTemplates.query.filter_by(owner=current_user.id).all()
     print([i.serialize for i in task_templates])
     return jsonify({"task_templates": [i.serialize for i in task_templates]})
+
+
+@blueprint.route("/templates/<int:task_template_id>", methods=["PUT"])
+def update_task_template(task_template_id):
+    task_template = TaskTemplates.query.filter_by(id=task_template_id).first()
+
+    if task_template is None:
+        abort(404)
+    if not request.json:
+        abort(400)
+    if "is_active" in request.json and type(request.json["is_active"]) is not bool:
+        abort(400)
+    task_template["is_active"] = request.json.get("is_active", task_template["is_active"])
+    return jsonify({"task": task_template})
