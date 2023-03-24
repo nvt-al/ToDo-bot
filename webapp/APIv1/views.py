@@ -68,16 +68,15 @@ def get_task(task_id):
 @blueprint.route("/<int:task_id>", methods=["PUT"])
 def update_task(task_id):
     query = Tasks.query.filter_by(id=task_id).first()
-    task = {"task_done": query.task_done}
 
-    if task is None:
+    if query is None:
         abort(404)
     if not request.json:
         abort(400)
     if "task_done" in request.json and type(request.json["task_done"]) is not bool:
         abort(400)
 
-    task["task_done"] = request.json.get("task_done", task["task_done"])
+    task = {"task_done": request.json.get("task_done", query.task_done)}
     query.task_done = task["task_done"]
     db.session.commit()
 
@@ -95,16 +94,14 @@ def get_task_templates():
 def update_task_template(task_template_id):
     query = TaskTemplates.query.filter_by(id=task_template_id).first()
 
-    task_template = {"is_active": query.is_active}
-
-    if task_template is None:
+    if query is None:
         abort(404)
     if not request.json:
         abort(400)
     if "is_active" in request.json and type(request.json["is_active"]) is not bool:
         abort(400)
 
-    task_template["is_active"] = request.json.get("is_active", task_template["is_active"])
+    task_template = {"is_active": request.json.get("is_active", query.is_active)}
 
     query.is_active = task_template["is_active"]
     db.session.commit()
