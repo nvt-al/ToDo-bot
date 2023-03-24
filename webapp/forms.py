@@ -10,8 +10,8 @@ from wtforms.validators import DataRequired
 
 
 class TaskForm(FlaskForm):
-    new_task = StringField("Введите текст: ", validators=[DataRequired()])
-    description_task = StringField("Введите описание: ", validators=[DataRequired()])
+    name_task = StringField("Введите текст: ", validators=[DataRequired()])
+    description = StringField("Введите описание: ", validators=[DataRequired()])
     to_time = TimeField("Введите время", format="%H:%M")
     to_date = DateField("Введите дату", format="%H:%M:%S")
     status = SelectField(

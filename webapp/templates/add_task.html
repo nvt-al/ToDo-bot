@@ -14,15 +14,15 @@
 
         {{ form.hidden_tag() }}
         <div class="mb-3">
-            {{ form.new_task.label(class="form-label") }}
-            {{ form.new_task(class="form-control", placeholder="Введите задачу", required=True) }}
+            {{ form.name_task.label(class="form-label") }}
+            {{ form.name_task(class="form-control", placeholder="Введите задачу", required=True) }}
             <div class="invalid-feedback">
                 Пожалуйста, введите задачу.
             </div>
         </div>
         <div class="mb-3">
-            {{ form.description_task.label(class="form-label") }}
-            {{ form.description_task(class="form-control", placeholder="Введите описание задачи", required=True) }}
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control", placeholder="Введите описание задачи", required=True) }}
             <div class="invalid-feedback">
                 Пожалуйста, введите описание задачи.
             </div>
