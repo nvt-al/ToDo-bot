@@ -1,5 +1,40 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block content %}
-    Список задач на сегодня
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <h1 class="mb-4">Задачи</h1>
+  <form method="POST" action="/" class="needs-validation" novalidate>
+    {{ form.hidden_tag() }}
+    <ul class="list-group">
+      
+      {% for task in tasks %}
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-8">
+            <h4>№{{ task.id }} {{ task.name }}</h4>
+            <p>{{ task.description }}</p>
+          </div>
+          <div class="col-md-4">
+           
+            <p class="text-end">{{ task.time }}</p>
+            <div class="form-group">
+
+              {{ form.done }}
+
+              {{ form.edit_task }}
+              {{ form.delete_task }}
+
+            </div>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </form>
+</div>
 {% endblock %}
