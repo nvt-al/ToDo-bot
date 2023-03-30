@@ -13,8 +13,6 @@ def login_required_API(func):
             return func(*args, **kwargs)
         elif not current_user.is_authenticated:
             return abort(401)
-        # elif not current_user.is_admin:
-        #     return redirect(url_for('index'))
         return func(*args, **kwargs)
 
     return decorated_view
