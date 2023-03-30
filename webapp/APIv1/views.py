@@ -1,5 +1,4 @@
 from flask import Blueprint, abort, jsonify, make_response, request, url_for
-from flask_login import current_user
 
 # from webapp.APIv1.decorators import login_required_API
 from webapp.models import Tasks, TaskTemplates, db
@@ -92,15 +91,22 @@ def get_task(task_id):
 @blueprint.route("/<int:task_id>", methods=["PUT"])
 # @login_required_API
 def update_task(task_id):
-    query = Tasks.query.filter_by(id=task_id).first()
+    user = get_user()
+    query = (
+        db.session.query(Tasks, TaskTemplates)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .filter(Tasks.id == task_id)
+        .first_or_404()
+    )
 
+    if query[1].owner != user.id:
+        abort(403)
     if not request.json:
         abort(400)
     if "task_done" in request.json and type(request.json["task_done"]) is not bool:
         abort(400)
 
-    task = {"task_done": request.json.get("task_done", query.task_done)}
-    query.task_done = task["task_done"]
+    query[0].task_done = request.json.get("task_done", query[0].task_done)
     db.session.commit()
 
     query = Tasks.query.filter_by(id=task_id).first()
@@ -120,16 +126,17 @@ def get_task_templates():
 @blueprint.route("/templates/<int:task_template_id>", methods=["PUT"])
 # @login_required_API
 def update_task_template(task_template_id):
+    user = get_user()
     query = TaskTemplates.query.filter_by(id=task_template_id).first_or_404()
 
+    if query.owner != user.id:
+        abort(403)
     if not request.json:
         abort(400)
     if "is_active" in request.json and type(request.json["is_active"]) is not bool:
         abort(400)
 
-    task_template = {"is_active": request.json.get("is_active", query.is_active)}
-
-    query.is_active = task_template["is_active"]
+    query.is_active = request.json.get("is_active", query.is_active)
     db.session.commit()
 
     query = TaskTemplates.query.filter_by(id=task_template_id).first_or_404()
