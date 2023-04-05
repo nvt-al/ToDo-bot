@@ -22,8 +22,11 @@ def add_tasks_in_todolist(todolist: ToDoLists) -> None:
     task_templates = (
         db.session.query(TaskTemplates.id).filter(TaskTemplates.is_active, TaskTemplates.id.notin_(tasks_list)).all()
     )
-    print(task_templates)
-    # for template in task_templates:
+    new_task_templates: list[Tasks] = []
+    for template in task_templates:
+        new_task_templates.append(Tasks(id_list=todolist.id, id_task=template.id))
+    db.session.bulk_save_objects(new_task_templates)
+    db.session.commit()
 
 
 if __name__ == "__main__":
