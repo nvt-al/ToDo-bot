@@ -1,39 +1,50 @@
 {% extends 'base.html' %}
 
-
 {% block title %}
 Главная страница
 {% endblock %}
 
 {% block body %}
 <div class="container">
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="alert alert-warning" role="alert">
+        {% for message in messages %}
+        {{ message}}
+        <br>
+        {% endfor %}
+      </div>
+        {% endif %}
+        {% endwith %}
   <h1 class="mb-4">Задачи</h1>
+
   <form method="POST" action="/" class="needs-validation" novalidate>
     {{ form.hidden_tag() }}
     <ul class="list-group">
-      
+
       {% for task in tasks %}
       <li class="list-group-item">
         <div class="row">
           <div class="col-md-8">
             <h4>№{{ task.id }} {{ task.name }}</h4>
             <p>{{ task.description }}</p>
+            {% if task.is_active==False %}
+            <td>Не выполнено</td>
+            {% else %}
+            <td> Завершено </td>
+            {% endif %}
+            <td><a href="/update/{{task.id}}" class="btn btn-outline-secondary">Отметить</a></td>
+            <td><a href="/delete/{{task.id}}" class="btn btn-outline-success">Удалить</a></td>
           </div>
           <div class="col-md-4">
-           
             <p class="text-end">{{ task.time }}</p>
             <div class="form-group">
-
-              {{ form.done }}
-
-              {{ form.edit_task }}
-              {{ form.delete_task }}
-
             </div>
           </div>
         </div>
       </li>
       {% endfor %}
+
     </ul>
   </form>
 </div>
