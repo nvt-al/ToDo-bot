@@ -1,6 +1,7 @@
 from datetime import date
 
 from webapp.models import Tasks, TaskTemplates, ToDoLists, db
+from webapp.todo.models import Reminders
 
 
 def add_todolist(day: date) -> ToDoLists:
@@ -26,3 +27,18 @@ def add_tasks_in_todolist(todolist_id: int) -> None:
         new_task_templates.append(Tasks(id_list=todolist_id, id_task=template.id))
     db.session.bulk_save_objects(new_task_templates)
     db.session.commit()
+
+
+def notification(today: date, reminder_time: str) -> None:
+    print(today)
+    print(reminder_time)
+    query = (
+        db.session.query(Tasks, TaskTemplates, Reminders, ToDoLists)
+        .join(ToDoLists, Tasks.id_list == ToDoLists.id)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template)
+        .filter(ToDoLists.name == today)
+        .filter(Reminders.time_reminder == reminder_time)
+        .all()
+    )
+    print(query)
