@@ -44,4 +44,4 @@ class Tasks(Base):
     todo_list = relationship("ToDoLists", backref="tasks")
 
     def __repr__(self):
-        return "<Задача {} из спска {}>".format(self.id_task, self.id_list)
+        return "<Задача {} из списка {}>".format(self.id_task, self.id_list)

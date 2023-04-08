@@ -4,24 +4,23 @@
 Главная страница
 {% endblock %}
 
-{% block body %}
+{% block content %}
 <div class="container">
   {% with messages = get_flashed_messages() %}
   {% if messages %}
   <div class="alert alert-warning" role="alert">
-        {% for message in messages %}
-        {{ message}}
-        <br>
-        {% endfor %}
-      </div>
-        {% endif %}
-        {% endwith %}
+    {% for message in messages %}
+    {{ message}}
+    <br>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
   <h1 class="mb-4">Задачи</h1>
 
-  <form method="POST" action="/" class="needs-validation" novalidate>
+  <form method="POST" action="{{ url_for('tasks.index') }}" class="needs-validation" novalidate>
     {{ form.hidden_tag() }}
     <ul class="list-group">
-
       {% for task in tasks %}
       <li class="list-group-item">
         <div class="row">
@@ -35,6 +34,7 @@
             {% endif %}
             <td><a href="/update/{{task.id}}" class="btn btn-outline-secondary">Отметить</a></td>
             <td><a href="/delete/{{task.id}}" class="btn btn-outline-success">Удалить</a></td>
+            <input type="checkbox" name="list_task" value="{{ task.id }}"> Выбрать
           </div>
           <div class="col-md-4">
             <p class="text-end">{{ task.time }}</p>
@@ -44,8 +44,18 @@
         </div>
       </li>
       {% endfor %}
-
     </ul>
+    <div class="form-group">
+      <label for="list_name">Название списка:</label>
+      <input type="text" class="form-control" id="list_name" name="list_name" required>
+      <div class="invalid-feedback">
+        Пожалуйста, введите название списка.
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Создать список</button>
+  </form>
+
+  </ul>
   </form>
 </div>
 {% endblock %}
