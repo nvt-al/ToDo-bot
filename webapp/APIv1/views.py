@@ -29,6 +29,8 @@ def forbidden(error):
 
 def get_user():
     telegram = request.args.get("telegram")
+    if not telegram:
+        abort(401)
     query = User.query.filter_by(telegram_user=telegram).first_or_404()
     return query
 

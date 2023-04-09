@@ -11,18 +11,9 @@ emoji_todo = ":white_medium_square:"
 emoji_done = ":white_check_mark:"
 
 
-async def greet_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    logging.info("Called /start")
-    # context.user_data['emoji'] = get_smile(context.user_data)
-    # my_keyboard = main_keyboard()
-    await update.message.reply_text("Здравствуй, пользователь!")
-
-
-async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+def get_text_tasks(tasks_list: list[dict]) -> str:
     text: str = "Задачи на сегодня:\n\n"
-    task_list_json = httpx.get(config.WEB)
-    task_list = task_list_json.json()["tasks"]
-    for index, task in enumerate(task_list, start=1):
+    for index, task in enumerate(tasks_list, start=1):
         text += str(index)
         # time = task.get('time', '')
         if task["task_done"]:
@@ -30,8 +21,28 @@ async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         else:
             text += f' {emojize(emoji_todo, language="alias")} {task["name"]}\n'
     text += "\nВыберите номер задачи для просмотра"
-    if update.message:
-        await update.message.reply_markdown_v2(text, reply_markup=task_list_inline_keyboard(task_list))
+    return text
+
+
+async def greet_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logging.info("Called /start")
+    name = update.message.from_user.name
+    # context.user_data['emoji'] = get_smile(context.user_data)
+    # my_keyboard = main_keyboard()
+    await update.message.reply_text(f"Здравствуй, {name}!")
+
+
+async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_name = update.message.from_user.name
+    request = httpx.get(config.WEB + config.WEB_PARAM.format(user_name)).json()
+    error = request.get("error")
+    if not error:
+        text = get_text_tasks(request["tasks"])
+        keyboard = task_list_inline_keyboard(request["tasks"])
+    else:
+        text = error
+        keyboard = None
+    await update.message.reply_markdown_v2(text, reply_markup=keyboard)
 
 
 async def show_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
