@@ -2,6 +2,7 @@ import logging
 
 import config
 from handlers import greet_user, process_callback, process_tasks_command
+from jobs import send_hello
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler
 
 logging.basicConfig(
@@ -13,6 +14,8 @@ logging.basicConfig(
 
 def main() -> None:
     mybot = Application.builder().token(config.TG_TOKEN).build()
+    jq = mybot.job_queue
+    jq.run_repeating(send_hello, interval=60)
 
     mybot.add_handler(CommandHandler("start", greet_user))
     mybot.add_handler(CommandHandler("tasks", process_tasks_command))
