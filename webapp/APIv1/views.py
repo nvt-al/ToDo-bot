@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
 from flask import Blueprint, abort, jsonify, make_response, request, url_for
+from sqlalchemy import func
 
 # from webapp.APIv1.decorators import login_required_API
 from webapp.models import Tasks, TaskTemplates, db
+from webapp.tasks.models import Reminders
 from webapp.user.models import User
 
 blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0/tasks")
@@ -15,6 +17,7 @@ class TaskAPI:
     template_uri: str
     name: str
     description: str
+    time: str | None = None
     is_active: bool | None = None
     task_done: bool | None = None
 
@@ -49,17 +52,20 @@ def get_user():
 
 def get_query_list(user):
     return (
-        db.session.query(Tasks, TaskTemplates)
+        db.session.query(Tasks, TaskTemplates, func.max(Reminders.time_reminder))
         .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template, isouter=True)
         .filter(Tasks.id_list == user.active_list)
         .filter(TaskTemplates.owner == user.id)
+        .group_by(Tasks)
     )
 
 
 def get_query_task(task_id):
     return (
-        db.session.query(Tasks, TaskTemplates)
+        db.session.query(Tasks, TaskTemplates, func.max(Reminders.time_reminder))
         .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template, isouter=True)
         .filter(Tasks.id == task_id)
     )
 
@@ -70,6 +76,7 @@ def serialize_query(query) -> TaskAPI:
         template_uri=url_for("APIv1.update_task_template", task_template_id=query[1].id, _external=True),
         name=query[1].name,
         description=query[1].description,
+        time=query[2].strftime("%H:%M") if query[2] else "",
         is_active=query[1].is_active,
         task_done=query[0].task_done,
     )
