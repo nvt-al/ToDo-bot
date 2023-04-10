@@ -10,6 +10,12 @@ from telegram.ext import ContextTypes
 emoji_todo = ":white_medium_square:"
 emoji_done = ":white_check_mark:"
 
+EXECUTE = "EXECUTE"
+CANCEL_EXECUTE = "CANCEL_EXECUTE"
+ON_TASK = "ON_TASK"
+OFF_TASK = "OFF_TASK"
+TO_TASK_LIST = "TO_TASK_LIST"
+
 
 def get_text_tasks(tasks_list: list[dict]) -> str:
     text: str = "Задачи на сегодня:\n\n"
@@ -24,6 +30,17 @@ def get_text_tasks(tasks_list: list[dict]) -> str:
     return text
 
 
+def get_text_task(task: dict) -> str:
+    text: str = f"*{task['name']}*\n\n"
+    if task["task_done"]:
+        text += f' {emojize(emoji_done, language="alias")} Завершено\n'
+    else:
+        text += f' {emojize(emoji_todo, language="alias")} Выполнить\n'
+    text += f"Время \- {task.get('time', 'Не задано')}\n"
+    text += f"{task.get('description', ' ')}"
+    return text
+
+
 async def greet_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Called /start")
     name = update.message.from_user.name
@@ -33,7 +50,11 @@ async def greet_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
 
 async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user_name = update.message.from_user.name
+    logging.info("Called /tasks")
+    if update.message:
+        user_name = update.message.from_user.name
+    elif update.callback_query:
+        user_name = update.callback_query.from_user.name
     request = httpx.get(config.WEB + config.WEB_PARAM.format(user_name)).json()
     error = request.get("error")
     if not error:
@@ -42,28 +63,47 @@ async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     else:
         text = error
         keyboard = None
-    await update.message.reply_markdown_v2(text, reply_markup=keyboard)
+
+    if update.message:
+        await update.message.reply_markdown_v2(text, reply_markup=keyboard)
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
 
 
-async def show_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.callback_query:
-        await update.callback_query.answer()
-        if update.callback_query.data:
-            task_id: str = update.callback_query.data
-        task_list_json = httpx.get(task_id)
-        task = task_list_json.json()["task"]
-        # for task in task_list:
-        # if task['uri'] == task_id:
-        text: str = f"*{task['name']}*\n\n"
-        if task["task_done"]:
-            text += f' {emojize(emoji_done, language="alias")} Завершено\n'
-        else:
-            text += f' {emojize(emoji_todo, language="alias")} Выполнить\n'
-        text += f"Время \- {task.get('time', 'Не задано')}\n"
-        text += f"{task.get('description', ' ')}"
-        await update.callback_query.edit_message_text(
-            text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=task_inline_keyboard()
-        )
+async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.callback_query.answer()
+    callback: str = update.callback_query.data
+    logging.info(f"Received callback {callback}")
+    if callback == EXECUTE:
+        logging.info(f"Called {callback}")
+        pass
+    elif callback == CANCEL_EXECUTE:
+        logging.info(f"Called {callback}")
+        pass
+    elif callback == ON_TASK:
+        logging.info(f"Called {callback}")
+        pass
+    elif callback == OFF_TASK:
+        logging.info(f"Called {callback}")
+        pass
+    elif callback == TO_TASK_LIST:
+        await show_tasks_list(update, context)
+    else:
+        await show_task(update, callback)
+
+
+async def show_task(update: Update, callback: str) -> None:
+    logging.info("Called show_task")
+    user_name = update.callback_query.from_user.name
+    request = httpx.get(callback + config.WEB_PARAM.format(user_name)).json()
+    error = request.get("error")
+    if not error:
+        text = get_text_task(request["task"])
+        keyboard = task_inline_keyboard(request["task"]["task_done"])
+    else:
+        text = error
+        keyboard = None
+    await update.callback_query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
 
 
 def task_list_inline_keyboard(task_list) -> InlineKeyboardMarkup:
@@ -71,11 +111,18 @@ def task_list_inline_keyboard(task_list) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inlinekeyboard)
 
 
-def task_inline_keyboard() -> InlineKeyboardMarkup:
+def task_inline_keyboard(done: bool) -> InlineKeyboardMarkup:
+    if done:
+        key = CANCEL_EXECUTE
+        key_txt = "Отменить выполнение"
+    else:
+        key = EXECUTE
+        key_txt = "Выполнить"
+
     inlinekeyboard = [
         [
-            InlineKeyboardButton("Отметить", callback_data="Отметить"),
-            InlineKeyboardButton("К списку", callback_data="К списку"),
+            InlineKeyboardButton(key_txt, callback_data=key),
+            InlineKeyboardButton("К списку", callback_data=TO_TASK_LIST),
         ]
     ]
     return InlineKeyboardMarkup(inlinekeyboard)
