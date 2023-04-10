@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from flask import Blueprint, abort, jsonify, make_response, request, url_for
 
 # from webapp.APIv1.decorators import login_required_API
@@ -5,6 +7,16 @@ from webapp.models import Tasks, TaskTemplates, db
 from webapp.user.models import User
 
 blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0/tasks")
+
+
+@dataclass
+class TaskAPI:
+    task_uri: str
+    template_uri: str
+    name: str
+    description: str
+    is_active: bool | None = None
+    task_done: bool | None = None
 
 
 @blueprint.errorhandler(404)
@@ -35,6 +47,34 @@ def get_user():
     return query
 
 
+def get_query_list(user):
+    return (
+        db.session.query(Tasks, TaskTemplates)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .filter(Tasks.id_list == user.active_list)
+        .filter(TaskTemplates.owner == user.id)
+    )
+
+
+def get_query_task(task_id):
+    return (
+        db.session.query(Tasks, TaskTemplates)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .filter(Tasks.id == task_id)
+    )
+
+
+def serialize_query(query) -> TaskAPI:
+    return TaskAPI(
+        task_uri=url_for("APIv1.get_task", task_id=query[0].id, _external=True),
+        template_uri=url_for("APIv1.update_task_template", task_template_id=query[1].id, _external=True),
+        name=query[1].name,
+        description=query[1].description,
+        is_active=query[1].is_active,
+        task_done=query[0].task_done,
+    )
+
+
 @blueprint.route(
     "/",
     methods=["GET"],
@@ -43,25 +83,11 @@ def get_user():
 def get_tasks():
     user = get_user()
 
-    query = (
-        db.session.query(Tasks, TaskTemplates)
-        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
-        .filter(Tasks.id_list == user.active_list)
-        .filter(TaskTemplates.owner == user.id)
-        .all()
-    )
+    query = get_query_list(user).all()
 
     tasks = []
     for task in query:
-        tasks.append(
-            {
-                "task_uri": url_for("APIv1.get_task", task_id=task[0].id, _external=True),
-                "template_uri": url_for("APIv1.update_task_template", task_template_id=task[1].id, _external=True),
-                "name": task[1].name,
-                "description": task[1].description,
-                "task_done": task[0].task_done,
-            }
-        )
+        tasks.append(serialize_query(task))
     return jsonify({"tasks": tasks})
 
 
@@ -69,24 +95,12 @@ def get_tasks():
 # @login_required_API
 def get_task(task_id):
     user = get_user()
-    query = (
-        db.session.query(Tasks, TaskTemplates)
-        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
-        .filter(Tasks.id == task_id)
-        .first_or_404()
-    )
+    query = get_query_task(task_id).first_or_404()
 
     if query[1].owner != user.id:
         abort(403)
 
-    task = {
-        "task_id": query[0].id,
-        "task_template_id": query[1].id,
-        "name": query[1].name,
-        "description": query[1].description,
-        "is_active": query[1].is_active,
-        "task_done": query[0].task_done,
-    }
+    task = serialize_query(query)
     return jsonify({"task": task})
 
 
@@ -94,12 +108,7 @@ def get_task(task_id):
 # @login_required_API
 def update_task(task_id):
     user = get_user()
-    query = (
-        db.session.query(Tasks, TaskTemplates)
-        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
-        .filter(Tasks.id == task_id)
-        .first_or_404()
-    )
+    query = get_query_task(task_id).first_or_404()
 
     if query[1].owner != user.id:
         abort(403)
@@ -111,8 +120,8 @@ def update_task(task_id):
     query[0].task_done = request.json.get("task_done", query[0].task_done)
     db.session.commit()
 
-    query = Tasks.query.filter_by(id=task_id).first()
-    task = {"id": query.id, "task_done": query.task_done}
+    query = get_query_task(task_id).first_or_404()
+    task = serialize_query(query)
 
     return jsonify({"task": task})
 
