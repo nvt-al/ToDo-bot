@@ -1,7 +1,7 @@
 import logging
 
 import config
-from handlers import get_context, greet_user, show_tasks_list
+from handlers import greet_user, process_callback, process_tasks_command
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler
 
 logging.basicConfig(
@@ -15,8 +15,8 @@ def main() -> None:
     mybot = Application.builder().token(config.TG_TOKEN).build()
 
     mybot.add_handler(CommandHandler("start", greet_user))
-    mybot.add_handler(CommandHandler("tasks", show_tasks_list))
-    mybot.add_handler(CallbackQueryHandler(get_context))
+    mybot.add_handler(CommandHandler("tasks", process_tasks_command))
+    mybot.add_handler(CallbackQueryHandler(process_callback))
 
     logging.info("Bot started")
     mybot.run_polling()
