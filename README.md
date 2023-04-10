@@ -1,7 +1,7 @@
 # ToDo-bot
 The best bot for your productivity :)
 
-## Запуск
+## Запуск web-сервера
 ### Командная строка
 `run.bat`
 ### PowerShell
@@ -9,3 +9,6 @@ The best bot for your productivity :)
 ### linux
 Выполните в консоли команду `chmod +x run.sh` - это сделает файл исполняемым.
 Теперь для запуска проекта нужно писать `./run.sh`
+
+## Запуск бота
+`python bot_app`
