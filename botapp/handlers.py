@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 
 import config
 import httpx
@@ -15,6 +16,29 @@ CANCEL_EXECUTE = "CANCEL_EXECUTE"
 ON_TASK = "ON_TASK"
 OFF_TASK = "OFF_TASK"
 TO_TASK_LIST = "TO_TASK_LIST"
+
+
+@dataclass
+class Task:
+    task_uri: str
+    template_uri: str
+    name: str
+    description: str
+    is_active: bool
+    task_done: bool
+
+
+@dataclass
+class TaskParam:
+    uri: str
+    is_active: bool | None = None
+    task_done: bool | None = None
+
+
+@dataclass
+class Key:
+    name: str
+    param: TaskParam | None = None
 
 
 def get_text_tasks(tasks_list: list[dict]) -> str:
@@ -58,6 +82,7 @@ async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     request = httpx.get(config.WEB + config.WEB_PARAM.format(user_name)).json()
     error = request.get("error")
     if not error:
+        # task_list: list[Task] = [Task(task) for task in request["tasks"]]
         text = get_text_tasks(request["tasks"])
         keyboard = task_list_inline_keyboard(request["tasks"])
     else:
@@ -72,14 +97,10 @@ async def show_tasks_list(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.callback_query.answer()
-    callback: str = update.callback_query.data
+    callback = update.callback_query.data
     logging.info(f"Received callback {callback}")
-    if callback == EXECUTE:
-        logging.info(f"Called {callback}")
-        pass
-    elif callback == CANCEL_EXECUTE:
-        logging.info(f"Called {callback}")
-        pass
+    if callback.get("key") == EXECUTE or callback.get("key") == CANCEL_EXECUTE:
+        await update_task(callback.get("uri"), callback.get("key"))
     elif callback == ON_TASK:
         logging.info(f"Called {callback}")
         pass
@@ -99,11 +120,18 @@ async def show_task(update: Update, callback: str) -> None:
     error = request.get("error")
     if not error:
         text = get_text_task(request["task"])
-        keyboard = task_inline_keyboard(request["task"]["task_done"])
+        keyboard = task_inline_keyboard(request["task"]["uri"], request["task"]["task_done"])
     else:
         text = error
         keyboard = None
     await update.callback_query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+
+
+async def update_task(uri, callback):
+    logging.info("called update_task")
+    # user_name = update.callback_query.from_user.name
+    user_name = "@DenRyzh"
+    request = httpx.get(uri + config.WEB_PARAM.format(user_name)).json()
 
 
 def task_list_inline_keyboard(task_list) -> InlineKeyboardMarkup:
@@ -111,7 +139,7 @@ def task_list_inline_keyboard(task_list) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inlinekeyboard)
 
 
-def task_inline_keyboard(done: bool) -> InlineKeyboardMarkup:
+def task_inline_keyboard(uri: str, done: bool) -> InlineKeyboardMarkup:
     if done:
         key = CANCEL_EXECUTE
         key_txt = "Отменить выполнение"
@@ -121,7 +149,7 @@ def task_inline_keyboard(done: bool) -> InlineKeyboardMarkup:
 
     inlinekeyboard = [
         [
-            InlineKeyboardButton(key_txt, callback_data=key),
+            InlineKeyboardButton(key_txt, callback_data={"key": key, "uri": uri}),
             InlineKeyboardButton("К списку", callback_data=TO_TASK_LIST),
         ]
     ]

@@ -55,8 +55,8 @@ def get_tasks():
     for task in query:
         tasks.append(
             {
-                "uri": url_for("APIv1.get_task", task_id=task[0].id, _external=True),
-                "task_templates_id": task[1].id,
+                "task_uri": url_for("APIv1.get_task", task_id=task[0].id, _external=True),
+                "template_uri": url_for("APIv1.update_task_template", task_template_id=task[1].id, _external=True),
                 "name": task[1].name,
                 "description": task[1].description,
                 "task_done": task[0].task_done,
