@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 
 from celery import Celery
 from celery.schedules import crontab
@@ -22,8 +22,7 @@ def create_new_day() -> None:
 
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs) -> None:
-    sender.add_periodic_task(crontab(hour="0"), create_new_day.s())
-    # sender.add_periodic_task(datetime.now(), create_new_day.s())
+    sender.add_periodic_task(crontab(hour="*/1", minute=0), create_new_day.s())
 
 
 if __name__ == "__main__":
