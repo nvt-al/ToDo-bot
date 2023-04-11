@@ -11,7 +11,7 @@ def get_text_tasks(task_list: list[Task]) -> str:
         text += str(index)
 
         if task.task_done:
-            text += f' {emojize(EMOJI_DONE, language="alias")} {task} ~{task.name}~\n'
+            text += f' {emojize(EMOJI_DONE, language="alias")} {task.time} ~{task.name}~\n'
         else:
             text += f' {emojize(EMOJI_TODO, language="alias")} {task.time} {task.name}\n'
     text += "\nВыберите номер задачи для просмотра"
@@ -25,7 +25,7 @@ def get_text_task(task: Task) -> str:
         text += f' {emojize(EMOJI_DONE, language="alias")} Завершено\n'
     else:
         text += f' {emojize(EMOJI_TODO, language="alias")} Выполнить\n'
-    text += f"Время \- {task.time}\n"
+    text += "Время \-" + f"{task.time}\n" if task.time else "Не задано\n"
     text += f"{task.description}"
     return text
 
