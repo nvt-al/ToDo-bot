@@ -5,7 +5,7 @@ from sqlalchemy import func
 
 # from webapp.APIv1.decorators import login_required_API
 from webapp.models import Tasks, TaskTemplates, db
-from webapp.tasks.models import Reminders
+from webapp.todo.models import Reminders
 from webapp.user.models import User
 
 blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0")
