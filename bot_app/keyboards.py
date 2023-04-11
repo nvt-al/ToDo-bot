@@ -1,5 +1,9 @@
 from config import CANCEL_EXECUTE, EXECUTE, URI_LIST, URI_TASK, Task
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+
+
+def main_keyboard():
+    return ReplyKeyboardMarkup([["/tasks", "/start"]])
 
 
 def task_list_inline_keyboard(task_list: list[Task]) -> InlineKeyboardMarkup:

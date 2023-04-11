@@ -10,7 +10,6 @@ from utils import get_text_task
 
 
 async def send_notification(context: ContextTypes.DEFAULT_TYPE):
-    logging.info("send hello")
     time: str = datetime.now().strftime("%H:%M")
     request: dict = httpx.get(WEB + "time/" + time).json()
     error = request.get("error")

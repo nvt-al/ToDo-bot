@@ -2,6 +2,7 @@ import logging
 
 import httpx
 from config import CANCEL_EXECUTE, EXECUTE, URI_LIST, URI_TASK, WEB_PARAM
+from keyboards import main_keyboard
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
@@ -13,7 +14,7 @@ async def greet_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     name = update.message.from_user.name
     # context.user_data['emoji'] = get_smile(context.user_data)
     # my_keyboard = main_keyboard()
-    await update.message.reply_text(f"Здравствуй, {name}!")
+    await update.message.reply_text(text=f"Здравствуй, {name}!", reply_markup=main_keyboard())
 
 
 async def process_tasks_command(update: Update, _) -> None:
