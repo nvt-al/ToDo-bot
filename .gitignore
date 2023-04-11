@@ -2,7 +2,6 @@
 todo.db
 todo.db.old
 todo.db-journal
-config.py
 dump.rdb
 celerybeat-schedule.bak
 celerybeat-schedule.dat

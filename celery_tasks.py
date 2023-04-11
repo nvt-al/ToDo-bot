@@ -25,7 +25,7 @@ def create_new_day() -> None:
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs) -> None:
     logging.info("periodic tasks")
-    sender.add_periodic_task(crontab(minute=0, hour=0), create_new_day.s())
+    sender.add_periodic_task(crontab(minute=0, hour="*/1"), create_new_day.s())
 
 
 if __name__ == "__main__":
