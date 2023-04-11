@@ -1,10 +1,26 @@
+from dataclasses import dataclass
+
 from flask import Blueprint, abort, jsonify, make_response, request, url_for
+from sqlalchemy import func
 
 # from webapp.APIv1.decorators import login_required_API
 from webapp.models import Tasks, TaskTemplates, db
+from webapp.todo.models import Reminders
 from webapp.user.models import User
 
-blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0/tasks")
+blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0")
+
+
+@dataclass
+class TaskAPI:
+    task_uri: str
+    template_uri: str
+    name: str
+    description: str
+    telegram_id: int | None = None
+    time: str | None = None
+    is_active: bool | None = None
+    task_done: bool | None = None
 
 
 @blueprint.errorhandler(404)
@@ -29,75 +45,75 @@ def forbidden(error):
 
 def get_user():
     telegram = request.args.get("telegram")
+    if not telegram:
+        abort(401)
     query = User.query.filter_by(telegram_user=telegram).first_or_404()
     return query
 
 
-@blueprint.route(
-    "/",
-    methods=["GET"],
-)
+def get_query_list(user):
+    return (
+        db.session.query(Tasks, TaskTemplates, func.max(Reminders.time_reminder))
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template, isouter=True)
+        .filter(Tasks.id_list == user.active_list)
+        .filter(TaskTemplates.owner == user.id)
+        .group_by(Tasks)
+    )
+
+
+def get_query_task(task_id):
+    return (
+        db.session.query(Tasks, TaskTemplates, func.max(Reminders.time_reminder))
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template, isouter=True)
+        .filter(Tasks.id == task_id)
+    )
+
+
+def serialize_query(query) -> TaskAPI:
+    return TaskAPI(
+        task_uri=url_for("APIv1.get_task", task_id=query[0].id, _external=True),
+        template_uri=url_for("APIv1.update_task_template", task_template_id=query[1].id, _external=True),
+        name=query[1].name,
+        description=query[1].description,
+        time=query[2].strftime("%H:%M") if query[2] else "",
+        is_active=query[1].is_active,
+        task_done=query[0].task_done,
+    )
+
+
+@blueprint.route("/tasks/", methods=["GET"])
 # @login_required_API
 def get_tasks():
     user = get_user()
 
-    query = (
-        db.session.query(Tasks, TaskTemplates)
-        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
-        .filter(Tasks.id_list == user.active_list)
-        .filter(TaskTemplates.owner == user.id)
-        .all()
-    )
+    query = get_query_list(user).all()
 
     tasks = []
     for task in query:
-        tasks.append(
-            {
-                "uri": url_for("APIv1.get_task", task_id=task[0].id, _external=True),
-                "task_templates_id": task[1].id,
-                "name": task[1].name,
-                "description": task[1].description,
-                "task_done": task[0].task_done,
-            }
-        )
+        tasks.append(serialize_query(task))
     return jsonify({"tasks": tasks})
 
 
-@blueprint.route("/<int:task_id>", methods=["GET"])
+@blueprint.route("/tasks/<int:task_id>", methods=["GET"])
 # @login_required_API
 def get_task(task_id):
     user = get_user()
-    query = (
-        db.session.query(Tasks, TaskTemplates)
-        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
-        .filter(Tasks.id == task_id)
-        .first_or_404()
-    )
+    query = get_query_task(task_id).first_or_404()
 
     if query[1].owner != user.id:
         abort(403)
 
-    task = {
-        "task_id": query[0].id,
-        "task_template_id": query[1].id,
-        "name": query[1].name,
-        "description": query[1].description,
-        "is_active": query[1].is_active,
-        "task_done": query[0].task_done,
-    }
+    task = serialize_query(query)
     return jsonify({"task": task})
 
 
-@blueprint.route("/<int:task_id>", methods=["PUT"])
+@blueprint.route("/tasks/<int:task_id>", methods=["PUT"])
 # @login_required_API
 def update_task(task_id):
     user = get_user()
-    query = (
-        db.session.query(Tasks, TaskTemplates)
-        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
-        .filter(Tasks.id == task_id)
-        .first_or_404()
-    )
+    query = get_query_task(task_id).first_or_404()
 
     if query[1].owner != user.id:
         abort(403)
@@ -109,8 +125,8 @@ def update_task(task_id):
     query[0].task_done = request.json.get("task_done", query[0].task_done)
     db.session.commit()
 
-    query = Tasks.query.filter_by(id=task_id).first()
-    task = {"id": query.id, "task_done": query.task_done}
+    query = get_query_task(task_id).first_or_404()
+    task = serialize_query(query)
 
     return jsonify({"task": task})
 
@@ -142,3 +158,46 @@ def update_task_template(task_template_id):
     query = TaskTemplates.query.filter_by(id=task_template_id).first_or_404()
 
     return jsonify({"task_templates": query.serialize})
+
+
+@blueprint.route("/tasks/time/<time>", methods=["GET"])
+def get_tasks_for_notification(time: str):
+    # today: date = date.today()
+    # reminder_time: str = datetime.now().strftime("%H:%M")
+    query = (
+        db.session.query(
+            Tasks.id,
+            Tasks.task_done,
+            TaskTemplates.id,
+            TaskTemplates.name,
+            TaskTemplates.description,
+            TaskTemplates.is_active,
+            Reminders.time_reminder,
+            User.telegram_id,
+        )
+        #  .join(ToDoLists, Tasks.id_list == ToDoLists.id)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template)
+        .join(User, TaskTemplates.owner == User.id)
+        .filter(User.active_list == Tasks.id_list)
+        .filter(Reminders.time_reminder == time)
+        .all()
+    )
+
+    tasks = []
+    for task in query:
+        print(task)
+        print(url_for("APIv1.get_task", task_id=task[0], _external=True))
+        tasks.append(
+            TaskAPI(
+                task_uri=url_for("APIv1.get_task", task_id=task[0], _external=True),
+                task_done=task[1],
+                template_uri=url_for("APIv1.update_task_template", task_template_id=task[2], _external=True),
+                name=task[3],
+                description=task[4],
+                is_active=task[5],
+                time=task[6].strftime("%H:%M") if task[6] else "",
+                telegram_id=task[7],
+            )
+        )
+    return jsonify({"tasks": tasks})
