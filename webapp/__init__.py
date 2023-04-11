@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -6,6 +8,12 @@ from webapp.APIv1.views import blueprint as APIv1_blueprint
 from webapp.models import db
 from webapp.user.models import User
 from webapp.user.views import blueprint as user_blueprint
+
+logging.basicConfig(
+    filename="webapp.log",
+    level=logging.INFO,
+    format="%(lineno)d #%(levelname)-8s " "[%(asctime)s] - %(name)s - %(message)s",
+)
 
 
 def create_app():
