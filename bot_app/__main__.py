@@ -14,6 +14,7 @@ logging.basicConfig(
 
 def main() -> None:
     mybot = Application.builder().token(config.TG_TOKEN).build()
+
     jq = mybot.job_queue
     jq.run_repeating(send_hello, interval=60)
 

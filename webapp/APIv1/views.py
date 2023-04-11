@@ -1,14 +1,15 @@
 from dataclasses import dataclass
+from datetime import date, datetime
 
 from flask import Blueprint, abort, jsonify, make_response, request, url_for
 from sqlalchemy import func
 
 # from webapp.APIv1.decorators import login_required_API
-from webapp.models import Tasks, TaskTemplates, db
+from webapp.models import Tasks, TaskTemplates, ToDoLists, db
 from webapp.tasks.models import Reminders
 from webapp.user.models import User
 
-blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0/tasks")
+blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0")
 
 
 @dataclass
@@ -17,6 +18,7 @@ class TaskAPI:
     template_uri: str
     name: str
     description: str
+    telegram_id: int | None = None
     time: str | None = None
     is_active: bool | None = None
     task_done: bool | None = None
@@ -82,10 +84,7 @@ def serialize_query(query) -> TaskAPI:
     )
 
 
-@blueprint.route(
-    "/",
-    methods=["GET"],
-)
+@blueprint.route("/tasks/", methods=["GET"])
 # @login_required_API
 def get_tasks():
     user = get_user()
@@ -98,7 +97,7 @@ def get_tasks():
     return jsonify({"tasks": tasks})
 
 
-@blueprint.route("/<int:task_id>", methods=["GET"])
+@blueprint.route("/tasks/<int:task_id>", methods=["GET"])
 # @login_required_API
 def get_task(task_id):
     user = get_user()
@@ -111,7 +110,7 @@ def get_task(task_id):
     return jsonify({"task": task})
 
 
-@blueprint.route("/<int:task_id>", methods=["PUT"])
+@blueprint.route("/tasks/<int:task_id>", methods=["PUT"])
 # @login_required_API
 def update_task(task_id):
     user = get_user()
@@ -160,3 +159,46 @@ def update_task_template(task_template_id):
     query = TaskTemplates.query.filter_by(id=task_template_id).first_or_404()
 
     return jsonify({"task_templates": query.serialize})
+
+
+@blueprint.route("/tasks/time/<time>", methods=["GET"])
+def get_tasks_for_notification(time: str):
+    # today: date = date.today()
+    # reminder_time: str = datetime.now().strftime("%H:%M")
+    query = (
+        db.session.query(
+            Tasks.id,
+            Tasks.task_done,
+            TaskTemplates.id,
+            TaskTemplates.name,
+            TaskTemplates.description,
+            TaskTemplates.is_active,
+            Reminders.time_reminder,
+            User.telegram_id,
+        )
+        #  .join(ToDoLists, Tasks.id_list == ToDoLists.id)
+        .join(TaskTemplates, Tasks.id_task == TaskTemplates.id)
+        .join(Reminders, TaskTemplates.id == Reminders.id_task_template)
+        .join(User, TaskTemplates.owner == User.id)
+        .filter(User.active_list == Tasks.id_list)
+        .filter(Reminders.time_reminder == time)
+        .all()
+    )
+
+    tasks = []
+    for task in query:
+        print(task)
+        print(url_for("APIv1.get_task", task_id=task[0], _external=True))
+        tasks.append(
+            TaskAPI(
+                task_uri=url_for("APIv1.get_task", task_id=task[0], _external=True),
+                task_done=task[1],
+                template_uri=url_for("APIv1.update_task_template", task_template_id=task[2], _external=True),
+                name=task[3],
+                description=task[4],
+                is_active=task[5],
+                time=task[6].strftime("%H:%M") if task[6] else "",
+                telegram_id=task[7],
+            )
+        )
+    return jsonify({"tasks": tasks})
