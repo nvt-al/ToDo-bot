@@ -44,7 +44,7 @@ def update(task_id):
     return redirect(url_for("tasks.index"))
 
 
-@tasks_bp.route("/delete/<int:task_id>", methods=["POST", "GET"])
+@tasks_bp.route("/delete/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
     task = TaskTemplates.query.filter_by(id=task_id).first_or_404()
@@ -73,7 +73,7 @@ def lists():
             new_task = Tasks(task_template=task, todo_list=name)
             db.session.add(new_task)
         db.session.commit()
-        print(name)
         flash("Список создан!")
         return redirect(url_for("tasks.lists"))
-    return render_template("lists.html", task_templates=task_templates, todo_lists=todo_lists, form=form)
+    return render_template(
+        "lists.html", task_templates=task_templates, todo_lists=todo_lists, form=form)

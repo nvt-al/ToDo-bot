@@ -25,7 +25,7 @@ def process_login():
         if user and user.check_password(form.password.data):
             login_user(user)
             flash("Вы вошли на сайт")
-            return redirect(url_for("index"))
+            return redirect(url_for("tasks.index"))
 
     flash("Неправильное имя пользователя или пароль")
     return redirect(url_for("user.login"))
@@ -34,7 +34,7 @@ def process_login():
 @blueprint.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("tasks.index"))
 
 
 @blueprint.route("/register")
