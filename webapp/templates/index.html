@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto">
+<div class="container">
   {% with messages = get_flashed_messages() %}
   {% if messages %}
   <div class="alert alert-warning" role="alert">
@@ -16,49 +16,45 @@
   </div>
   {% endif %}
   {% endwith %}
-  {% if  current_user.is_authenticated %}
+  {% if current_user.is_authenticated %}
   <h1 class="mb-4">Задачи</h1>
 
-  <form method="POST" action="{{ url_for('tasks.index') }}" class="needs-validation col-md-8 offset-md-2 text-center" novalidate>
+  <form method="POST" action="{{ url_for('tasks.index') }}" class="needs-validation row g-3"
+    novalidate>
     {{ form.hidden_tag() }}
-    <ul class="list-group">
-      
-      {% for task in tasks %}
-      <li class="list-group-item">
-        <div class="row align-items-center">
-          <div class="col-md-8">
-            <h4>№{{ task.id }} {{ task.name }}</h4>
-            <p>{{ task.description }}</p>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" name="list_task" value="{{ task.id }}">
-              <label class="form-check-label" for="list_task">Выбрать</label>
+    <div class="col-md-8">
+      <ul class="list-group">
+        {% for task in tasks %}
+        <li class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h4 class="mb-0">{{ task.name }}</h4>
+              <small class="text-muted">{{ task.to_date.strftime('%m-%d') }} {{ task.to_time.strftime('%H:%M') }}</small>
+              <p class="mt-2">{{ task.description }}</p>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="list_task" value="{{ task.id }}">
+                <label class="form-check-label" for="list_task">Выбрать</label>
+              </div>
+              {% if task.is_active==False %}
+              <span class="badge bg-danger">Не выполнено</span>
+              {% else %}
+              <span class="badge bg-success">Завершено</span>
+              {% endif %}
+              <a href="/update/{{task.id}}" class="btn btn-outline-secondary">Отметить</a>
+              <a href="/delete/{{task.id}}" class="btn btn-outline-success">Удалить</a>
             </div>
-            {% if task.is_active==False %}
-            <span class="badge bg-danger">Не выполнено</span>
-            {% else %}
-            <span class="badge bg-success">Завершено</span>
-            {% endif %}
-            <a href="/update/{{task.id}}" class="btn btn-outline-secondary">Отметить</a>
-            <a href="/delete/{{task.id}}" class="btn btn-outline-success">Удалить</a>
           </div>
-          <div class="col-md-4">
-            <p class="text-end">{{ task.time }}</p>
-            {% else %}
-
-           
-          </div>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-    <div class="form-group mt-4">
-      <label for="list_name">Название списка:</label>
-      <input type="text" class="form-control" id="list_name" name="list_name" required>
-      <div class="invalid-feedback">
-        Пожалуйста, введите название списка.
-      </div>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Создать список</button>
+    <div class="col-md-4">
+      <div class="form-group mt-4">
+        {{ form.list_name.label(class="form-label") }}
+        {{ form.list_name(class="form-control") }}
+      </div>
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
   </form>
   {% endif %}
 </div>

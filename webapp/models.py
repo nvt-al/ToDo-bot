@@ -21,6 +21,9 @@ class TaskTemplates(Base):
     owner = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     description = db.Column(db.Text)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    to_date = db.Column(db.Date)
+    to_time = db.Column(db.Time)
+    
 
     def __repr__(self):
         return "<Задача {} {}>".format(self.id, self.name)
@@ -29,6 +32,7 @@ class TaskTemplates(Base):
 class ToDoLists(Base):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    
 
     def __repr__(self):
         return "<Имя ToDo списка {}>".format(self.name)
@@ -39,6 +43,7 @@ class Tasks(Base):
     id_task = db.Column(db.Integer, db.ForeignKey("task_templates.id"), nullable=False)
     id_list = db.Column(db.Integer, db.ForeignKey("to_do_lists.id"), nullable=False)
     task_done = db.Column(db.Boolean, default=False)
+    
 
     task_template = relationship("TaskTemplates", backref="tasks")
     todo_list = relationship("ToDoLists", backref="tasks")
