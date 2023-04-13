@@ -3,6 +3,10 @@ todo.db
 todo.db.old
 todo.db-journal
 config.py
+dump.rdb
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

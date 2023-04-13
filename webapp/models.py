@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy, model
 from sqlalchemy import MetaData
-from sqlalchemy.orm import relationship
 
 metadata = MetaData(
     naming_convention={
@@ -28,11 +27,16 @@ class TaskTemplates(Base):
     def __repr__(self):
         return "<Задача {} {}>".format(self.id, self.name)
 
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {"id": self.id, "name": self.name, "description": self.description, "is_active": self.is_active}
+
 
 class ToDoLists(Base):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    
+
+    name = db.Column(db.String, nullable=False, unique=True)
 
     def __repr__(self):
         return "<Имя ToDo списка {}>".format(self.name)
@@ -45,8 +49,7 @@ class Tasks(Base):
     task_done = db.Column(db.Boolean, default=False)
     
 
-    task_template = relationship("TaskTemplates", backref="tasks")
-    todo_list = relationship("ToDoLists", backref="tasks")
-
     def __repr__(self):
-        return "<Задача {} из списка {}>".format(self.id_task, self.id_list)
+
+        return "<Задача №{} из списка {}>".format(self.id_task, self.id_list)
+
