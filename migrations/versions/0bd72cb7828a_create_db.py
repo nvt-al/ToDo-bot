@@ -24,8 +24,6 @@ def upgrade():
         sa.Column("owner", sa.Integer(), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
-        sa.Column("to_date", sa.Date(), nullable=True),
-        sa.Column("to_time", sa.Time(), nullable=True),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_task_templates")),
     )
     op.create_table(
