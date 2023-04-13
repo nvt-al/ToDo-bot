@@ -19,8 +19,7 @@
   {% if current_user.is_authenticated %}
   <h1 class="mb-4">Задачи</h1>
 
-  <form method="POST" action="{{ url_for('tasks.index') }}" class="needs-validation row g-3"
-    novalidate>
+  <form method="POST" action="{{ url_for('tasks.index') }}" class="needs-validation row g-3" novalidate>
     {{ form.hidden_tag() }}
     <div class="col-md-8">
       <ul class="list-group">
@@ -29,7 +28,8 @@
           <div class="row align-items-center">
             <div class="col-md-8">
               <h4 class="mb-0">{{ task.name }}</h4>
-              <small class="text-muted">{{ task.to_date.strftime('%m-%d') }} {{ task.to_time.strftime('%H:%M') }}</small>
+              <small class="text-muted">{{ task.to_date.strftime('%m-%d') }} {{ task.to_time.strftime('%H:%M')
+                }}</small>
               <p class="mt-2">{{ task.description }}</p>
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="checkbox" name="list_task" value="{{ task.id }}">

@@ -59,7 +59,11 @@ def process_reg():
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
+                flash(
+                    'Ошибка в поле "{}": - {}'.format(
+                        getattr(form, field).label.text, error
+                    )
+                )
         return redirect(url_for("user.register"))
 
 
@@ -93,5 +97,9 @@ def process_save_settings():
     else:
         for field, errors in settings_form.errors.items():
             for error in errors:
-                flash('Ошибка в поле "{}": - {}'.format(getattr(settings_form, field).label.text, error))
+                flash(
+                    'Ошибка в поле "{}": - {}'.format(
+                        getattr(settings_form, field).label.text, error
+                    )
+                )
     return redirect(url_for("user.settings"))
