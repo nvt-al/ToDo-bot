@@ -28,8 +28,6 @@
           <div class="row align-items-center">
             <div class="col-md-8">
               <h4 class="mb-0">{{ task.name }}</h4>
-              <small class="text-muted">{{ task.to_date.strftime('%m-%d') }} {{ task.to_time.strftime('%H:%M')
-                }}</small>
               <p class="mt-2">{{ task.description }}</p>
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="checkbox" name="list_task" value="{{ task.id }}">

@@ -41,7 +41,7 @@ def lists():
     form = CreateList()
     task_templates = TaskTemplates.query.filter_by(owner=current_user.id).all()
     todo_lists = ToDoLists.query.all()
-  # todo_lists = ToDoLists.query.filter_by(owner=current_user.id).all()            вместо owner что вставить?
+    # todo_lists = ToDoLists.query.filter_by(owner=current_user.id).all()            вместо owner что вставить?
     if form.validate_on_submit():
         create_task_list(form)
         return redirect(url_for("tasks.lists"))
@@ -55,17 +55,11 @@ def lists():
 def add_task():
     form = TaskForm()
     if form.validate_on_submit():
-        to_time = datetime.strptime(form.to_time.data.strftime("%H:%M"), "%H:%M").time()
-        to_date = datetime.strptime(
-            form.to_date.data.strftime("%Y-%m-%d"), "%Y-%m-%d"
-        ).date()
         new_task = TaskTemplates(
             name=form.name_task.data.capitalize(),
             description=form.description.data.capitalize(),
             owner=current_user.id,
-            is_active=False,
-            to_time=to_time,
-            to_date=to_date,
+            is_active=False
         )
         db.session.add(new_task)
         db.session.commit()
