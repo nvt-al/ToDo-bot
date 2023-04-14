@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, TimeField, SelectMultipleField
+from wtforms import DateField, SelectMultipleField, StringField, SubmitField, TimeField
 from wtforms.validators import DataRequired, Length, Optional, ValidationError
 
 
@@ -33,6 +33,4 @@ class TaskForm(FlaskForm):
             Length(min=1, max=500, message="Описание должно быть от 1 до 500 символов"),
         ],
     )
-
     to_time = TimeField("Введите время", format="%H:%M", validators=[Optional()])
-    to_date = DateField("Введите дату", format="%Y-%m-%d", validators=[DataRequired()])
