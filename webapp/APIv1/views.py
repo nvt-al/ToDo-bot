@@ -162,8 +162,6 @@ def update_task_template(task_template_id):
 
 @blueprint.route("/tasks/time/<time>", methods=["GET"])
 def get_tasks_for_notification(time: str):
-    # today: date = date.today()
-    # reminder_time: str = datetime.now().strftime("%H:%M")
     query = (
         db.session.query(
             Tasks.id,
@@ -180,14 +178,12 @@ def get_tasks_for_notification(time: str):
         .join(Reminders, TaskTemplates.id == Reminders.id_task_template)
         .join(User, TaskTemplates.owner == User.id)
         .filter(User.active_list == Tasks.id_list)
-        .filter(Reminders.time_reminder == time)
+        .filter(Reminders.time_reminder == time + ":00.000000")
         .all()
     )
 
     tasks = []
     for task in query:
-        print(task)
-        print(url_for("APIv1.get_task", task_id=task[0], _external=True))
         tasks.append(
             TaskAPI(
                 task_uri=url_for("APIv1.get_task", task_id=task[0], _external=True),
