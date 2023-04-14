@@ -34,10 +34,12 @@
                                             <label class="form-check-label" for="list_task">Выбрать</label>
                                         </div>
                                         {% if task.is_active==False %}
-                                            <span class="badge bg-danger">Не выполнено</span>
+                                            <span class="badge bg-danger">Отключена</span>
                                         {% else %}
-                                            <span class="badge bg-success">Завершено</span>
+                                            <span class="badge bg-success">Активна</span>
                                         {% endif %}
+                                        <a href="/update/{{task.id}}" class="btn btn-outline-secondary">Отметить</a>
+                                        <a href="/delete/{{task.id}}" class="btn btn-outline-success">Удалить</a>
                                     </div>
                                 </div>
                             </li>

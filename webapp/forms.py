@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, SelectMultipleField, StringField, SubmitField, TimeField
-from wtforms.validators import DataRequired, Length, Optional, ValidationError
+from wtforms import StringField, SubmitField, TimeField
+from wtforms.validators import DataRequired, Length, Optional
 
 
 class CreateList(FlaskForm):
@@ -9,12 +9,6 @@ class CreateList(FlaskForm):
         validators=[DataRequired()],
         render_kw={"class": "form-control"},
     )
-    # list_task = SelectMultipleField(
-    #     "Задачи",
-    #     choices=[("task1", "Задача 1"), ("task2", "Задача 2"), ("task3", "Задача 3")],
-    #     validators=[DataRequired()],
-    #     render_kw={"class": "form-control"},
-    # )
     submit = SubmitField("Создать!", render_kw={"class": "btn btn-primary"})
 
 

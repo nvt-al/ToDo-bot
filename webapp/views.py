@@ -21,12 +21,10 @@ def create_task_list(form):
 
 
 @tasks_bp.route("/", methods=["GET", "POST"])
-# @login_required
 def index():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
     form = CreateList()
-    # tasks = TaskTemplates.query.all()
     if login_required:
         tasks = TaskTemplates.query.filter_by(owner=current_user.id).all()
     if form.validate_on_submit():
@@ -36,15 +34,12 @@ def index():
 
 
 @tasks_bp.route("/lists", methods=["GET", "POST"])
-# @login_required
 def lists():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
     form = CreateList()
-    # task_templates = TaskTemplates.query.filter_by(owner=current_user.id).all()
     task_templates = TaskTemplates.query.all()
     todo_lists = ToDoLists.query.all()
-    # todo_lists = ToDoLists.query.filter_by(owner=current_user.id).all()            вместо owner что вставить?
     if form.validate_on_submit():
         create_task_list(form)
         return redirect(url_for("tasks.lists"))
@@ -62,7 +57,6 @@ def add_task():
             name=form.name_task.data.capitalize(),
             description=form.description.data.capitalize(),
             owner=current_user.id,
-            is_active=False,
         )
         db.session.add(new_task)
         db.session.commit()
