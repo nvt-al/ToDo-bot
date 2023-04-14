@@ -11,7 +11,7 @@ blueprint = Blueprint("user", __name__, url_prefix="/user")
 @blueprint.route("/login")
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("tasks.index"))
     title = "Авторизация"
     login_form = LoginForm()
     return render_template("user/login.html", page_title=title, form=login_form)
@@ -25,7 +25,7 @@ def process_login():
         if user and user.check_password(form.password.data):
             login_user(user)
             flash("Вы вошли на сайт")
-            return redirect(url_for("index"))
+            return redirect(url_for("tasks.index"))
 
     flash("Неправильное имя пользователя или пароль")
     return redirect(url_for("user.login"))
@@ -34,13 +34,13 @@ def process_login():
 @blueprint.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("tasks.index"))
 
 
 @blueprint.route("/register")
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("tasks.index"))
     form = RegistrationForm()
     title = "Регистрация"
     return render_template("user/registration.html", page_title=title, form=form)
@@ -59,7 +59,11 @@ def process_reg():
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
+                flash(
+                    'Ошибка в поле "{}": - {}'.format(
+                        getattr(form, field).label.text, error
+                    )
+                )
         return redirect(url_for("user.register"))
 
 
@@ -93,5 +97,9 @@ def process_save_settings():
     else:
         for field, errors in settings_form.errors.items():
             for error in errors:
-                flash('Ошибка в поле "{}": - {}'.format(getattr(settings_form, field).label.text, error))
+                flash(
+                    'Ошибка в поле "{}": - {}'.format(
+                        getattr(settings_form, field).label.text, error
+                    )
+                )
     return redirect(url_for("user.settings"))

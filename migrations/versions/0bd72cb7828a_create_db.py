@@ -38,8 +38,14 @@ def upgrade():
         sa.Column("id_task", sa.Integer(), nullable=False),
         sa.Column("id_list", sa.Integer(), nullable=False),
         sa.Column("task_done", sa.Boolean(), nullable=True),
-        sa.ForeignKeyConstraint(["id_list"], ["to_do_lists.id"], name=op.f("fk_tasks_id_list_to_do_lists")),
-        sa.ForeignKeyConstraint(["id_task"], ["task_templates.id"], name=op.f("fk_tasks_id_task_task_templates")),
+        sa.ForeignKeyConstraint(
+            ["id_list"], ["to_do_lists.id"], name=op.f("fk_tasks_id_list_to_do_lists")
+        ),
+        sa.ForeignKeyConstraint(
+            ["id_task"],
+            ["task_templates.id"],
+            name=op.f("fk_tasks_id_task_task_templates"),
+        ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_tasks")),
     )
     # ### end Alembic commands ###
