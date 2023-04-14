@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 
 from webapp.forms import CreateList, TaskForm
 from webapp.models import Tasks, TaskTemplates, ToDoLists, db
+from webapp.todo.models import Reminders
 
 tasks_bp = Blueprint("tasks", __name__)
 
@@ -60,6 +61,10 @@ def add_task():
         )
         db.session.add(new_task)
         db.session.commit()
+        if form.to_time.data:
+            new_time = Reminders(id_task_template=new_task.id, time_reminder=form.to_time.data)
+            db.session.add(new_time)
+            db.session.commit()
         flash("Задача добавлена!")
         return redirect(url_for("tasks.index"))
     return render_template("add_task.html", form=form)
