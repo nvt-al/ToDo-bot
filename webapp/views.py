@@ -54,17 +54,20 @@ def add_task():
         return redirect(url_for("user.login"))
     form = TaskForm()
     if form.validate_on_submit():
-        new_task = TaskTemplates(
+        new_task_template = TaskTemplates(
             name=form.name_task.data.capitalize(),
             description=form.description.data.capitalize(),
             owner=current_user.id,
         )
-        db.session.add(new_task)
+        db.session.add(new_task_template)
         db.session.commit()
+
+        new_task = Tasks(id_list=current_user.active_list, id_task=new_task_template.id)
+        db.session.add(new_task)
         if form.to_time.data:
-            new_time = Reminders(id_task_template=new_task.id, time_reminder=form.to_time.data)
+            new_time = Reminders(id_task_template=new_task_template.id, time_reminder=form.to_time.data)
             db.session.add(new_time)
-            db.session.commit()
+        db.session.commit()
         flash("Задача добавлена!")
         return redirect(url_for("tasks.index"))
     return render_template("add_task.html", form=form)
