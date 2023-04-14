@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center">
+  <h1>Списки задач</h1>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Название списка</th>
+          <th>Задачи</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        {% for todo_list in todo_lists %}
+        <tr>
+          <td>{{ todo_list.name }}</td>
+          <td>
+            <ul class="list-group">
+              {% for task in todo_list.tasks %}
+              <li class="list-group-item">{{ task.task_template.name }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
