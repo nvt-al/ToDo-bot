@@ -1,28 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import (
-    BooleanField,
-    PasswordField,
-    StringField,
-    SubmitField,
-    TimeField,
-    EmailField,
-)
-from wtforms.validators import (
-    DataRequired,
-    Email,
-    EqualTo,
-    ValidationError,
-    email_validator,
-)
+from wtforms import BooleanField, EmailField, PasswordField, StringField, SubmitField, TimeField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 from webapp.user.models import User
 
 
 class LoginForm(FlaskForm):
     username = StringField(
-        "Имя пользователя",
-        validators=[DataRequired()],
-        render_kw={"class": "form-control"},
+        "Имя пользователя", validators=[DataRequired()], render_kw={"class": "form-control"}
     )
     password = PasswordField(
         "Пароль", validators=[DataRequired()], render_kw={"class": "form-control"}
@@ -35,14 +20,10 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     username = StringField(
-        "Имя пользователя",
-        validators=[DataRequired()],
-        render_kw={"class": "form-control"},
+        "Имя пользователя", validators=[DataRequired()], render_kw={"class": "form-control"}
     )
     email = EmailField(
-        "Email",
-        validators=[DataRequired(), Email()],
-        render_kw={"class": "form-control"},
+        "Email", validators=[DataRequired(), Email()], render_kw={"class": "form-control"}
     )
     password = PasswordField(
         "Пароль", validators=[DataRequired()], render_kw={"class": "form-control"}
@@ -62,19 +43,13 @@ class RegistrationForm(FlaskForm):
     def validate_email(self, email):
         users_count = User.query.filter_by(email=email.data).count()
         if users_count > 0:
-            raise ValidationError(
-                "Пользователь c такой электронной почтой уже зарегистрирован"
-            )
+            raise ValidationError("Пользователь c такой электронной почтой уже зарегистрирован")
 
 
 class SettingsForm(FlaskForm):
     telegram_user = StringField("Telegram", render_kw={"class": "form-control"})
-    default_reminder_time = TimeField(
-        "Время напоминаний", render_kw={"class": "form-control"}
-    )
-    time_start_new_day = TimeField(
-        "Начало нового дня", render_kw={"class": "form-control"}
-    )
+    default_reminder_time = TimeField("Время напоминаний", render_kw={"class": "form-control"})
+    time_start_new_day = TimeField("Начало нового дня", render_kw={"class": "form-control"})
     week_report = BooleanField(
         "Отправлять отчёт за неделю", render_kw={"class": "form-check-input"}
     )
