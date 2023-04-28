@@ -1,63 +1,63 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Добавить задачу
+Добавить задачу
 {% endblock %}
 
 {% block content %}
 
-    <div class="container">
-        <h1>Добавить задачу</h1>
+<div class="container">
+    <h1>Добавить задачу</h1>
 
-        <form method="POST" action="/add_task" class="needs-validation" novalidate>
-            <div class="mb-3">
+    <form method="POST" action="/add_task" class="needs-validation" novalidate>
+        <div class="mb-3">
+            {{ form.csrf_token }}
+            {{ form.name_task.label(class="form-label") }}
+            {{ form.name_task(class="form-control", placeholder="Введите задачу", required=True) }}
+            {% if form.name_task.errors %}
+                <ul class="errors">
+                    {% for error in form.name_task.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="invalid-feedback">
+                Пожалуйста, введите задачу.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control", placeholder="Введите описание задачи", required=True) }}
+            {% if form.description.errors %}
+            <ul class="errors">
+                {% for error in form.description.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <div class="invalid-feedback">
+                Пожалуйста, введите описание задачи.
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
                 {{ form.csrf_token }}
-                {{ form.name_task.label(class="form-label") }}
-                {{ form.name_task(class="form-control", placeholder="Введите задачу", required=True) }}
-                {% if form.name_task.errors %}
-
-                    <ul class="errors">
-                        {% for error in form.name_task.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-
-                {% endif %}
+                {{ form.to_time.label(class="form-label") }}
+                {{ form.to_time(class="form-control", placeholder="Введите время", required=True) }}
 
                 <div class="invalid-feedback">
-                    Пожалуйста, введите задачу.
+                    Пожалуйста, введите время.
                 </div>
             </div>
-            <div class="mb-3">
-                {{ form.description.label(class="form-label") }}
-                {{ form.description(class="form-control", placeholder="Введите описание задачи", required=True) }}
-                {% if form.description.errors %}
+        </div>
 
-                    <ul class="errors">
-                        {% for error in form.description.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
+        <button class="btn btn-primary" type="submit">Создать</button>
 
-                    </ul>
-                {% endif %}
-                <div class="invalid-feedback">
-                    Пожалуйста, введите описание задачи.
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    {{ form.csrf_token }}
-                    {{ form.to_time.label(class="form-label") }}
-                    {{ form.to_time(class="form-control", placeholder="Введите время", required=True) }}
-                    <div class="invalid-feedback">
-                        Пожалуйста, введите время.
-                    </div>
-                </div>
-            </div>
-
-            <button class="btn btn-primary" type="submit">Создать</button>
-
-        </form>
-    </div>
+    </form>
+</div>
 
 {% endblock %}
