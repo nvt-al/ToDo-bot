@@ -8,6 +8,7 @@ from webapp.todo.models import Reminders
 tasks_bp = Blueprint("tasks", __name__)
 
 
+@tasks_bp.route("/list_task", methods=["GET", "POST"])
 def create_task_list(form):
     selected_tasks = request.form.getlist("list_task")
     selected_tasks = [int(task_id) for task_id in selected_tasks]
@@ -93,3 +94,9 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
     return redirect(url_for("tasks.index"))
+
+
+@tasks_bp.route("/report", methods=["GET", "POST"])
+@login_required
+def report(task_id):
+    return render_template("report.html")
