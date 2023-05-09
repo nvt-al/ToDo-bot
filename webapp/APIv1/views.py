@@ -4,8 +4,9 @@ from flask import Blueprint, abort, jsonify, make_response, request, url_for
 from sqlalchemy import func
 
 # from webapp.APIv1.decorators import login_required_API
-from webapp.models import Tasks, TaskTemplates, db
-from webapp.todo.models import Reminders
+from webapp.db import db
+from webapp.task_templates.models import Reminders, TaskTemplates
+from webapp.todo.models import Tasks
 from webapp.user.models import User
 
 blueprint = Blueprint("APIv1", __name__, url_prefix="/todo/api/v1.0")

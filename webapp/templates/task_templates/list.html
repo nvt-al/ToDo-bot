@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Все задачи
+{% endblock %}
+
+{% block content %}
+
+    <div class="container offset-md-1">
+        <h1 class="mb-4">Все задачи</h1>
+
+        <div class="col-md-6">
+            <ul class="list-group">
+                {% for template in task_templates %}
+                    <li class="list-group-item">
+                        <div class="row align-items-center">
+                            <div>
+                                <h4>{{ template.name }}</h4>
+                                <p class="mt-2">{{ template.description }}</p>
+
+                                {% if template.is_active==False %}
+                                    <span class="badge bg-danger">Задача отключена</span>
+                                {% else %}
+                                    <span class="badge bg-success">Задача активна</span>
+                                {% endif %}
+                                <!-- <a href="{{ url_for('tasks.update', task_id=template.id) }}" class="btn
+                                        btn-outline-secondary">Отметить</a>
+                                <a href="{{ url_for('tasks.delete_task', task_id=template.id) }}" class="btn
+                                        btn-outline-success">Удалить</a> -->
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

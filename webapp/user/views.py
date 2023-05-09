@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_user, logout_user
 
-from webapp.models import db
+from webapp.db import db
 from webapp.user.forms import LoginForm, RegistrationForm, SettingsForm
 from webapp.user.models import User
 
@@ -59,11 +59,7 @@ def process_reg():
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash(
-                    'Ошибка в поле "{}": - {}'.format(
-                        getattr(form, field).label.text, error
-                    )
-                )
+                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
         return redirect(url_for("user.register"))
 
 
@@ -97,9 +93,5 @@ def process_save_settings():
     else:
         for field, errors in settings_form.errors.items():
             for error in errors:
-                flash(
-                    'Ошибка в поле "{}": - {}'.format(
-                        getattr(settings_form, field).label.text, error
-                    )
-                )
+                flash('Ошибка в поле "{}": - {}'.format(getattr(settings_form, field).label.text, error))
     return redirect(url_for("user.settings"))

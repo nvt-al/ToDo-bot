@@ -5,10 +5,11 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 
 from webapp.APIv1.views import blueprint as APIv1_blueprint
-from webapp.models import db
+from webapp.db import db
+from webapp.task_templates.views import blueprint as task_template_blueprint
+from webapp.todo.views import blueprint as task_blueprint
 from webapp.user.models import User
 from webapp.user.views import blueprint as user_blueprint
-from webapp.views import tasks_bp
 
 logging.basicConfig(
     filename="webapp.log",
@@ -22,7 +23,9 @@ def create_app():
     app.config.from_pyfile("config.py")
     db.init_app(app)
     migrate = Migrate(app, db)
-    app.register_blueprint(tasks_bp)
+
+    app.register_blueprint(task_template_blueprint)
+    app.register_blueprint(task_blueprint)
     app.register_blueprint(user_blueprint)
     app.register_blueprint(APIv1_blueprint)
 

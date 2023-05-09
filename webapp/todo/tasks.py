@@ -1,7 +1,9 @@
 import logging
 from datetime import date
 
-from webapp.models import Tasks, TaskTemplates, ToDoLists, db
+from webapp.db import db
+from webapp.task_templates.models import TaskTemplates
+from webapp.todo.models import Tasks, ToDoLists
 from webapp.user.models import User
 
 

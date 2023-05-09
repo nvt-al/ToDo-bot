@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Новая задача
+{% endblock %}
+
+{% block content %}
+
+    <div class="container offset-md-1">
+        <h1>Создание новой задачи</h1>
+        <div class="row">
+            <div class="col-md-6 ">
+                <form action="{{ url_for('templates.process_save_template') }}" method="POST"
+                    class="mb-3">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group mb-3">
+                        {{ form.name.label }}
+                        {{ form.name(placeholder="Новая задача", required=True) }}
+                        <!-- {% if form.name.errors %}
+                <ul class="errors">
+                    {% for error in form.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %} -->
+
+                        <div class="invalid-feedback">
+                            Пожалуйста, введите название задачи.
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(placeholder="Описание задачи") }}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <div class="col sm">
+                            {{ form.to_time.label(class="form-label") }}
+                            {{ form.to_time(placeholder="Введите время") }}
+
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        {{ form.submit() }}
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

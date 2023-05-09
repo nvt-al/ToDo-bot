@@ -8,7 +8,7 @@ Create Date: 2023-03-30 11:34:02.029727
 import sqlalchemy as sa
 from alembic import op
 
-from webapp.models import db
+from webapp.db import db
 
 # revision identifiers, used by Alembic.
 revision = "35116325bcba"
