@@ -1,41 +1,34 @@
- <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4
-    border-bottom">
-    <a href="{{ url_for('tasks.index') }}" class="d-flex align-items-center
-        text-dark
-        text-decoration-none">
-        <span class="fs-4">ToDo-Lists</span>
+<div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+    <a href="{{ url_for('tasks.index') }}" class="d-flex align-items-center text-dark text-decoration-none">
+        <span class="fs-4">ToDo-Tracker</span>
     </a>
 
     <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
         {% if not current_user.is_authenticated %}
-            <a class="me-3 py-2 text-dark text-decoration-none"
-                href="{{ url_for('user.register') }}">Регистрация</a>
-            <a class="me-3 py-2 text-dark text-decoration-none"
-                href="{{ url_for('user.login') }}">Войти</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('user.register') }}">Регистрация</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('user.login') }}">Войти</a>
         {% else %}
             <!-- <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('tasks.report') }}">Отчёт</a> -->
-            <a class="me-3 py-2 text-dark text-decoration-none"
-                href="{{ url_for('tasks.add_task') }}">Добавить задачу</a>
-            <a class="me-3 py-2 text-dark text-decoration-none"
-                href="{{ url_for('tasks.lists') }}">Списки задач</a>
-            <a class="me-3 py-2 text-dark text-decoration-none"
-                href="{{ url_for('user.settings') }}">Настройки</a>
-            <a class="me-3 py-2 text-dark text-decoration-none"
-                href="{{ url_for('user.logout') }}">Выйти</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('templates.list_templates') }}">Все задачи</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('templates.add_template') }}">Добавить задачу</a>
+            <!-- <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('tasks.index') }}">Списки задач</a> -->
+            <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('user.settings') }}">Настройки</a>
+            <a class="me-3 py-2 text-dark text-decoration-none" href="{{ url_for('user.logout') }}">Выйти</a>
         {% endif %}
     </nav>
 </div>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <div class="alert alert-warning" role="alert">
-            {% for message in messages %}
-              {{ message }}
-              <br>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-warning" role="alert">
+                    {% for message in messages %}
+                        {{ message }}
+                        <br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
 </div>
