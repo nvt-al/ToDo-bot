@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from webapp.db import db
@@ -8,7 +8,7 @@ from webapp.task_template.forms import TaskTemplateForm
 from webapp.task_template.models import Reminder, TaskTemplate
 from webapp.todo.models import Task
 
-blueprint = Blueprint("templates", __name__, url_prefix="/templates")
+blueprint = Blueprint("task_template", __name__, url_prefix="/templates")
 
 
 @blueprint.route("/")
@@ -16,7 +16,10 @@ def list_templates():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
     task_templates = TaskTemplate.query.filter_by(owner=current_user.id).all()
-    return render_template("task_template/list.html", task_templates=task_templates)
+    title = "Все задачи"
+    return render_template(
+        "task_template/list.html", page_title=title, task_templates=task_templates
+    )
 
 
 @blueprint.route("/add", methods=["GET", "POST"])
@@ -25,7 +28,8 @@ def add_template():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
     form = TaskTemplateForm()
-    return render_template("task_template/add.html", form=form)
+    title = "Новая задача"
+    return render_template("task_template/add.html", page_title=title, form=form)
 
 
 @blueprint.route("/process-save-template", methods=["POST"])
@@ -56,4 +60,4 @@ def process_save_template():
         for field, errors in form.errors.items():
             for error in errors:
                 flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
-    return redirect(url_for("templates.add_template"))
+    return redirect(url_for("task_template.add_template"))
