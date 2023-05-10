@@ -1,5 +1,3 @@
-from datetime import time
-
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -11,13 +9,13 @@ class User(Base, UserMixin):
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(128))
     email = db.Column(db.String(50))
-    telegram_user = db.Column(db.String(50))
+    # telegram_user = db.Column(db.String(50))
     telegram_id = db.Column(db.Integer)
-    active_list = db.Column(db.Integer, db.ForeignKey("to_do_lists.id"))
-    default_reminder_time = db.Column(db.Time, default=time(12, 0))
-    time_start_new_day = db.Column(db.Time, nullable=False, default=time(0, 0))
-    week_report = db.Column(db.Boolean, default=False)
-    month_report = db.Column(db.Boolean, default=False)
+    active_date = db.Column(db.Integer, db.ForeignKey("date.id"))
+    # list_reminder_time = db.Column(db.Time, default=time(12, 0))
+    # time_start_new_day = db.Column(db.Time, nullable=False, default=time(0, 0))
+    # week_report = db.Column(db.Boolean, default=False)
+    # month_report = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return "<User {}>".format(self.username)

@@ -2,8 +2,8 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 
 from webapp.db import db
-from webapp.task_templates.models import TaskTemplates
-from webapp.todo.models import Tasks, ToDoLists
+from webapp.task_template.models import TaskTemplate
+from webapp.todo.models import Date, Task
 
 blueprint = Blueprint("tasks", __name__)
 
@@ -16,7 +16,7 @@ def index():
 @blueprint.route("/update/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def update(task_id):
-    task = TaskTemplates.query.filter_by(id=task_id).first()
+    task = TaskTemplate.query.filter_by(id=task_id).first()
     if task.owner != current_user.id:
         abort(403)
     task.is_active = not task.is_active
@@ -27,7 +27,7 @@ def update(task_id):
 @blueprint.route("/delete/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def delete_task(task_id):
-    task = TaskTemplates.query.filter_by(id=task_id).first_or_404()
+    task = TaskTemplate.query.filter_by(id=task_id).first_or_404()
     if task.owner != current_user.id:
         abort(403)
     db.session.delete(task)
