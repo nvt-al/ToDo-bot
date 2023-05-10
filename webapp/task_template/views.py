@@ -28,7 +28,7 @@ def add_template():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
     form = TaskTemplateForm()
-    title = "Новая задача"
+    title = "Новая задач"
     return render_template("task_template/add.html", page_title=title, form=form)
 
 
@@ -54,7 +54,8 @@ def process_save_template():
             db.session.add(new_time)
         db.session.commit()
         logging.info(f"{new_task} created")
-        logging.info(f"{new_time} created")
+        if form.to_time.data:
+            logging.info(f"{new_time} created")
         flash("Задача добавлена!")
     else:
         for field, errors in form.errors.items():
