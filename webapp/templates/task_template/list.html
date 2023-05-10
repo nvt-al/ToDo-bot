@@ -11,7 +11,12 @@
                         <li class="list-group-item">
                             <div class="row align-items-center">
                                 <div>
-                                    <h4>{{ template.name }}</h4>
+                                    <h4>
+                                        <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                            href="{{ url_for('task_template.edit_template', task_id=template.id) }}">
+                                                {{ template.name }}
+                                        </a>
+                                    </h4>
                                     <p class="mt-2">{{ template.description }}</p>
 
                                     {% if template.is_active==False %}
