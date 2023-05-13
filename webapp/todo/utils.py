@@ -31,7 +31,7 @@ def add_date(day: date) -> Date:
 
 def add_tasks_in_todolist(todolist_id: int) -> None:
     logging.info("run add_task_in_todolist")
-    tasks_list = db.session.query(Task.task_template_id).filter(Task.id_list == todolist_id)
+    tasks_list = db.session.query(Task.task_template_id).filter(Task.date_id == todolist_id)
     task_templates = (
         db.session.query(TaskTemplate.id)
         .filter(TaskTemplate.is_active, TaskTemplate.id.notin_(tasks_list))
@@ -39,9 +39,12 @@ def add_tasks_in_todolist(todolist_id: int) -> None:
     )
     new_task_templates: list[Task] = []
     for template in task_templates:
-        new_task_templates.append(Task(id_list=todolist_id, id_task=template.id))
+        new_task_templates.append(Task(date_id=todolist_id, task_template_id=template.id))
     db.session.bulk_save_objects(new_task_templates)
     users = User.query.filter(User.active_date < todolist_id).all()
     for user in users:
         user.active_list = todolist_id
     db.session.commit()
+
+    if new_task_templates:
+        logging.info(*new_task_templates, "created")
