@@ -8,27 +8,28 @@ repos:
     -   id: check-json
     -   id: requirements-txt-fixer
 -   repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
     -   id: black
-        args: [--line-length=120,]
+        args: [--line-length=100,]
 -   repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
     -   id: isort
-        args: [--line-length=120]
+        args: [--line-length=100]
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
     -   id: bandit
 -   repo: https://github.com/motet-a/jinjalint
-    rev: "0.5"
+    rev: '0.5'
     hooks:
     -   id: jinjalint
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.1.1
+    rev: v1.2.0
     hooks:
     -   id: mypy
+        additional_dependencies: [types-pytz==2023.3.0.0]
         args: [--follow-imports=silent,
                --ignore-missing-imports,
                --show-column-numbers,

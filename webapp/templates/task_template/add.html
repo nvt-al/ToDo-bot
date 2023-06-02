@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-4 ">
+        <form action="{{ url_for('task_template.process_save_template') }}" method="POST"
+            class="form-row">
+            {{ form.hidden_tag() }}
+            <div class="form-group col-md-12">
+                {{ form.name.label }}
+                {{ form.name(placeholder="Новая задача", required=True) }}
+            </div>
+
+            <div class="form-group col-md-12">
+                {{ form.description.label }}
+                {{ form.description(placeholder="Описание задачи") }}
+            </div>
+
+            <div class="form-group col-md-12">
+                <div class="col">
+                    {{ form.to_time.label }}
+                    {{ form.to_time(placeholder="Введите время") }}
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                {{ form.submit() }}
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
