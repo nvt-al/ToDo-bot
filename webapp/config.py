@@ -1,12 +1,7 @@
 import os
 
-from dotenv import load_dotenv
+basedir = os.path.abspath(os.path.dirname(__file__))
 
-dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
-
-SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "..", "todo.db")
 SECRET_KEY = os.getenv("SECRET_KEY", "")
 SQLALCHEMY_TRACK_MODIFICATIONS = False

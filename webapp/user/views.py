@@ -1,10 +1,7 @@
-import logging
-
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_user, logout_user
 
-from webapp.db import db
-from webapp.todo.utils import get_today_id
+from webapp.models import db
 from webapp.user.forms import LoginForm, RegistrationForm, SettingsForm
 from webapp.user.models import User
 
@@ -53,18 +50,20 @@ def register():
 def process_reg():
     form = RegistrationForm()
     if form.validate_on_submit():
-        today_id = get_today_id()
-        new_user = User(username=form.username.data, email=form.email.data, active_date=today_id)
+        new_user = User(username=form.username.data, email=form.email.data)
         new_user.set_password(form.password.data)
         db.session.add(new_user)
         db.session.commit()
-        logging.info(f"{new_user} registred")
         flash("Вы успешно зарегистрировались!")
         return redirect(url_for("user.login"))
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
+                flash(
+                    'Ошибка в поле "{}": - {}'.format(
+                        getattr(form, field).label.text, error
+                    )
+                )
         return redirect(url_for("user.register"))
 
 
@@ -73,11 +72,11 @@ def settings():
     if not current_user.is_authenticated:
         return redirect(url_for("user.login"))
     settings_form = SettingsForm(
-        # telegram_user=current_user.telegram_user,
-        # default_reminder_time=current_user.default_reminder_time,
-        # time_start_new_day=current_user.time_start_new_day,
-        # week_report=current_user.week_report,
-        # month_report=current_user.month_report,
+        telegram_user=current_user.telegram_user,
+        default_reminder_time=current_user.default_reminder_time,
+        time_start_new_day=current_user.time_start_new_day,
+        week_report=current_user.week_report,
+        month_report=current_user.month_report,
     )
     title = "Настройки"
     return render_template("user/settings.html", page_title=title, form=settings_form)
@@ -86,14 +85,14 @@ def settings():
 @blueprint.route("/process-save-settings", methods=["POST"])
 def process_save_settings():
     settings_form = SettingsForm()
-    # my_user = User.query.filter_by(id=current_user.id).first()
+    my_user = User.query.filter_by(id=current_user.id).first()
     if settings_form.validate_on_submit():
-        # my_user.telegram_user = settings_form.telegram_user.data
-        # my_user.default_reminder_time = settings_form.default_reminder_time.data
-        # my_user.time_start_new_day = settings_form.time_start_new_day.data
-        # my_user.week_report = settings_form.week_report.data
-        # my_user.month_report = settings_form.month_report.data
-        # db.session.commit()
+        my_user.telegram_user = settings_form.telegram_user.data
+        my_user.default_reminder_time = settings_form.default_reminder_time.data
+        my_user.time_start_new_day = settings_form.time_start_new_day.data
+        my_user.week_report = settings_form.week_report.data
+        my_user.month_report = settings_form.month_report.data
+        db.session.commit()
         flash("Настройки успешно сохранены!")
     else:
         for field, errors in settings_form.errors.items():

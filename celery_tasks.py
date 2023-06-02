@@ -6,7 +6,7 @@ from celery.schedules import crontab
 from pytz import timezone
 
 from webapp import create_app
-from webapp.todo import utils
+from webapp.todo import tasks
 
 flask_app = create_app()
 celery_app = Celery("tasks", broker="redis://127.0.0.1:6379/0")
@@ -18,8 +18,8 @@ def create_new_day() -> None:
     logging.info("task new day")
     with flask_app.app_context():
         today: date = date.today()
-        today_list = utils.add_date(today)
-        utils.add_tasks_in_todolist(today_list.id)
+        today_list = tasks.add_todolist(today)
+        tasks.add_tasks_in_todolist(today_list.id)
 
 
 @celery_app.on_after_configure.connect

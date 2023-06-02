@@ -1,15 +1,13 @@
-# ToDo-tracker
-Web-сервис и телеграм бот для контроля и напоминаний о регулярных задачах
+# ToDo-bot
+The best bot for your productivity :)
 
 ----
 ## Настройка виртуального окружения
 
 Перед запуском переименовать/скопировать `.env.example` в `.env`
-
 ```
 cp .env.example .env
 ```
-
 и исправить значения на необходимые
 
 ----
@@ -35,14 +33,14 @@ cp .env.example .env
 
 ----
 
-## Запуск Celery
+## Запуск задач Celery
 ### Windows
 `set FORKED_BY_MULTIPROCESSING=1 && celery -A celery_tasks worker --loglevel=info`
 
 ### linux
 `celery -A celery_tasks worker --loglevel=info`
 
-Чтобы запуск задач по расписанию работал, необходимо запустить celery-beat. Он следит за расписанием и отправлять задачи worker-ам. Beat нужно запускать отдельно, поэтому понадобится еще одно окно терминала
+Чтобы запуск задач по расписанию работал, мы должны запустить celery-beat. Именно он будет следить за расписанием и отправлять задачи worker-ам. Beat нужно запускать отдельно, поэтому понадобится еще одно окно терминала
 
 `celery -A celery_tasks beat`
 

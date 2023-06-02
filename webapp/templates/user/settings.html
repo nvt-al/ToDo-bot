@@ -3,8 +3,8 @@
 {% block content %}
 
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
             <form action="{{ url_for('user.process_save_settings') }}"
                 method="POST" class="text-center mb-3">
                 {{ form.hidden_tag() }}
